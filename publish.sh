@@ -8,5 +8,5 @@ git tag -a $version -m "released version $version to PyPi"
 git tag
 git push origin $version
 
-python setup.py sdist upload -r test
-python setup.py bdist_wheel upload -r test
+python setup.py sdist upload -r pypi
+python setup.py bdist_wheel upload -r pypi
