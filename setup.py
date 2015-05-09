@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='forge',
@@ -8,7 +8,7 @@ setup(
     license='Apache 2.0',
     author='daviddenton',
     author_email='denton.david+pypy@gmail.com',
-    py_modules=['forge'],
+    packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
