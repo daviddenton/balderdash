@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#run tests here!
+./build.sh
 
 export VERSION=$1
 

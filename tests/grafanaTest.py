@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../balderdash')
+
 import unittest
 import random
 import balderdash
