@@ -7,6 +7,6 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script:
-  coverage run --source=balderdash setup.py test
+  export VERSION=X.X.X && coverage run --source=balderdash setup.py test
 after_success:
   coveralls
