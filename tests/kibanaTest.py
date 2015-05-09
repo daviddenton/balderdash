@@ -1,8 +1,8 @@
 import unittest
 import random
-import forge
+import balderdash
 
-dg = forge.kibana
+dg = balderdash.kibana
 
 def randomFilter():
     return dg.Filter() \

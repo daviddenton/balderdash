@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
 import os
 
-version = os.getenv("VERSION")
+version = os.environ['VERSION']
+
 setup(
-    name='forge',
+    name='balderdash',
     version=version,
     description='Builders for monitoring dashboards',
-    url='http://github.com/daviddenton/forge/',
+    url='http://github.com/daviddenton/balderdash/',
     license='Apache 2.0',
     author='daviddenton',
     author_email='denton.david+pypy@gmail.com',

@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 
-python test/grafanaTest.py
-python test/kibanaTest.py
+python tests/grafanaTest.py
+python tests/kibanaTest.py
