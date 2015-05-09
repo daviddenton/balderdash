@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
+import os
 
+version = os.getenv("VERSION")
 setup(
     name='forge',
-    version='0.0.1',
+    version=version,
     description='Builders for monitoring dashboards',
     url='http://github.com/daviddenton/forge/',
     license='Apache 2.0',
@@ -23,5 +25,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
-    )
+    ]
+)

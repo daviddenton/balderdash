@@ -1,7 +1,10 @@
 #!/bin/sh
 
-$newVersion=$1
+export version=$1
 
-git tag -a $newVersion -m "released version $newVersion to PyPi"
+git tag -a $version -m "released version $version to PyPi"
 git tag
-git push origin $newVersion
+git push origin $version
+
+python setup.py sdist
+python setup.py bdist_wheel
