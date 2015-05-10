@@ -1,8 +1,8 @@
 #!/bin/sh
 
-./build.sh
-
 export VERSION=$1
+
+python setup.py test
 
 git tag -a $VERSION -m "released version $VERSION to PyPi"
 git tag

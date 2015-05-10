@@ -12,6 +12,7 @@ setup(
     author='daviddenton',
     author_email='denton.david+pypy@gmail.com',
     packages=find_packages(exclude=['tests*']),
+    test_suite="tests",
     include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
