@@ -1,6 +1,24 @@
+# coding=utf-8
 # Constants for the various options go here...
-Filled = 10
-Unfilled = 0
+
+
+class YAxisFormat:
+    NoFormat = 'none'
+    Short = 'short'
+    Bytes = 'bytes'
+    Bits = 'bits'
+    BitsPerSecond = 'bps'
+    Seconds = 's'
+    Milliseconds = 'ms'
+    Microseconds = 'µs'
+    Nanoseconds = 'ns'
+    Percent = 'percent'
+
+
+class FillStyle:
+    Filled = 10
+    Unfilled = 0
+
 
 class Metric:
     def __init__(self, target):
@@ -11,8 +29,9 @@ class Metric:
             "target": self.target
         }
 
+
 class Panel:
-    def __init__(self, title, y_axis_format, filled):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []

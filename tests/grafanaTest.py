@@ -34,8 +34,8 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.panelId = random.randint(1, 999)
         self.rowId = random.randint(1, 999)
         self.maxDiff = 100000
-        self.yaxis = str(random.random())
-        self.filled = random.choice([dg.Filled, dg.Unfilled])
+        self.yaxis = random.choice([dg.YAxisFormat.Bits, dg.YAxisFormat.BitsPerSecond, dg.YAxisFormat.Bytes])
+        self.filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
         self.target = 'target'
 
     def test_metric_renders(self):
