@@ -3,7 +3,7 @@ import os
 
 setup(
     name='balderdash',
-    version='0.0.2',
+    version='1.1.0',
     description='Builders for monitoring dashboards',
     url='http://github.com/daviddenton/balderdash/',
     license='Apache 2.0',
