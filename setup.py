@@ -1,11 +1,9 @@
 from setuptools import setup, find_packages
 import os
 
-version = os.environ['VERSION']
-
 setup(
     name='balderdash',
-    version=version,
+    version='0.0.2',
     description='Builders for monitoring dashboards',
     url='http://github.com/daviddenton/balderdash/',
     license='Apache 2.0',
@@ -24,8 +22,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ]
 )
