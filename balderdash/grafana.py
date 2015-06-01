@@ -15,6 +15,11 @@ class YAxisFormat:
     Percent = 'percent'
 
 
+class StackStyle:
+    Stacked = True
+    Unstacked = False
+
+
 class FillStyle:
     Filled = 10
     Unfilled = 0
@@ -31,11 +36,12 @@ class Metric:
 
 
 class Panel:
-    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
         self.filled = filled
+        self.stacked = stacked
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
@@ -73,7 +79,7 @@ class Panel:
             "points": False,
             "pointradius": 5,
             "bars": False,
-            "stack": False,
+            "stack": self.stacked,
             "percentage": False,
             "legend": {
                 "show": True,

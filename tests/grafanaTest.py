@@ -17,7 +17,7 @@ def random_metric():
 
 
 def random_panel():
-    return dg.Panel(str(random.random()), str(random.random()), str(random.random())) \
+    return dg.Panel(str(random.random()), str(random.random()), str(random.random()), str(random.random()), ) \
         .with_metric(random_metric()) \
         .with_metric(random_metric())
 
@@ -36,6 +36,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.maxDiff = 100000
         self.yaxis = random.choice([dg.YAxisFormat.Bits, dg.YAxisFormat.BitsPerSecond, dg.YAxisFormat.Bytes])
         self.filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
+        self.stacked = random.choice([[dg.StackStyle.Stacked, dg.StackStyle.Stacked]])
         self.target = 'target'
 
     def test_metric_renders(self):
@@ -79,7 +80,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "points": False,
             "pointradius": 5,
             "bars": False,
-            "stack": False,
+            "stack": self.stacked,
             "percentage": False,
             "legend": {
                 "show": True,
@@ -102,7 +103,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "links": []
         }
 
-        self.assertEqual(expected, dg.Panel(self.title, self.yaxis, self.filled)
+        self.assertEqual(expected, dg.Panel(self.title, self.yaxis, self.filled, self.stacked)
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, width))
