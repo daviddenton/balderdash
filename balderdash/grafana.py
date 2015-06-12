@@ -47,6 +47,10 @@ class Panel:
         self.metrics.append(metric.build())
         return self
 
+    def with_metrics(self, metrics):
+        self.metrics += metrics
+        return self
+
     def build(self, panel_id, span=12):
         return {
             "title": self.title,
@@ -111,6 +115,10 @@ class Row:
         self.panels.append(panel)
         return self
 
+    def with_panels(self, panels):
+        self.panels += panels
+        return self
+
     def build(self, row_id):
         def to_panel(panel_builder):
             return panel_builder.build(self.panels.index(panel_builder), 12 / len(self.panels))
@@ -131,6 +139,10 @@ class Dashboard:
 
     def with_row(self, row):
         self.rows.append(row.build(len(self.rows)))
+        return self
+
+    def with_rows(self, rows):
+        self.rows += rows
         return self
 
     def build(self):
