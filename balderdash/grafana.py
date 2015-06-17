@@ -39,7 +39,7 @@ class Metric:
 
 
 class Panel:
-    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=None):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
