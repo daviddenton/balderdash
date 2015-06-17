@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../balderdash')
 
 import unittest
@@ -21,6 +22,7 @@ def random_panel():
         .with_metric(random_metric()) \
         .with_metric(random_metric())
 
+
 def random_row():
     return dg.Row() \
         .with_panel(random_panel()) \
@@ -38,6 +40,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
         self.stacked = random.choice([[dg.StackStyle.Stacked, dg.StackStyle.Stacked]])
         self.target = 'target'
+        self.minimum = 5
 
     def test_metric_renders(self):
         expected = {
@@ -48,7 +51,7 @@ class GrafanaDashboardTest(unittest.TestCase):
     def test_panel_renders(self):
         metric1 = random_metric()
         metric2 = random_metric()
-        width = random.randint(1,100)
+        width = random.randint(1, 100)
         expected = {
             "title": self.title,
             "error": False,
@@ -67,7 +70,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "grid": {
                 "leftMax": None,
                 "rightMax": None,
-                "leftMin": None,
+                "leftMin": self.minimum,
                 "rightMin": None,
                 "threshold1": None,
                 "threshold2": None,
@@ -103,7 +106,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "links": []
         }
 
-        self.assertEqual(expected, dg.Panel(self.title, self.yaxis, self.filled, self.stacked)
+        self.assertEqual(expected, dg.Panel(self.title, self.yaxis, self.filled, self.stacked, self.minimum)
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, width))

@@ -14,6 +14,9 @@ class YAxisFormat:
     Nanoseconds = 'ns'
     Percent = 'percent'
 
+class YAxisMinimum:
+    Zero = 0
+    Auto = None
 
 class StackStyle:
     Stacked = True
@@ -36,12 +39,13 @@ class Metric:
 
 
 class Panel:
-    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=None):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
         self.filled = filled
         self.stacked = stacked
+        self.minimum = minimum
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
@@ -70,7 +74,7 @@ class Panel:
             "grid": {
                 "leftMax": None,
                 "rightMax": None,
-                "leftMin": None,
+                "leftMin": self.minimum,
                 "rightMin": None,
                 "threshold1": None,
                 "threshold2": None,
