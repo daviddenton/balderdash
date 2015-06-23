@@ -98,7 +98,7 @@ class Panel:
                 "total": False,
                 "avg": False
             },
-            "NonePointMode": "connected",
+            "nullPointMode": "connected",
             "steppedLine": False,
             "tooltip": {
                 "value_type": "cumulative",
@@ -125,7 +125,7 @@ class Row:
 
     def build(self, row_id):
         def to_panel(panel_builder):
-            return panel_builder.build(self.panels.index(panel_builder), 12 / len(self.panels))
+            return panel_builder.build(self.panels.index(panel_builder)+1, 12 / len(self.panels))
 
         return {
             "title": "Row %d" % row_id,
@@ -142,7 +142,7 @@ class Dashboard:
         self.rows = []
 
     def with_row(self, row):
-        self.rows.append(row.build(len(self.rows)))
+        self.rows.append(row.build(len(self.rows)+1))
         return self
 
     def with_rows(self, rows):

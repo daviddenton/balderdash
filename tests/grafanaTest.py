@@ -94,7 +94,7 @@ class GrafanaDashboardTest(unittest.TestCase):
                 "total": False,
                 "avg": False
             },
-            "NonePointMode": "connected",
+            "nullPointMode": "connected",
             "steppedLine": False,
             "tooltip": {
                 "value_type": "cumulative",
@@ -119,7 +119,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "height": "250px",
             "editable": True,
             "collapse": False,
-            "panels": [panel1.build(0, 6), panel2.build(1, 6)]
+            "panels": [panel1.build(1, 6), panel2.build(2, 6)]
         }
         self.assertEqual(expected, dg.Row()
                          .with_panel(panel1)
@@ -138,7 +138,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "editable": True,
             "hideControls": False,
             "sharedCrosshair": False,
-            "rows": [row1.build(0), row2.build(1)],
+            "rows": [row1.build(1), row2.build(2)],
             "nav": [
                 {
                     "type": "timepicker",
