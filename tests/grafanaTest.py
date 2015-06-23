@@ -115,16 +115,16 @@ class GrafanaDashboardTest(unittest.TestCase):
         panel1 = random_panel()
         panel2 = random_panel()
         expected = {
-            "title": "Row %d" % self.rowId,
+            "title": "Row %d" % 1,
             "height": "250px",
             "editable": True,
             "collapse": False,
-            "panels": [panel1.build(1, 6), panel2.build(2, 6)]
+            "panels": [panel1.build(11, 6), panel2.build(12, 6)]
         }
         self.assertEqual(expected, dg.Row()
                          .with_panel(panel1)
                          .with_panel(panel2)
-                         .build(self.rowId))
+                         .build(1))
 
     def test_dashboard_renders(self):
         row1 = random_row()

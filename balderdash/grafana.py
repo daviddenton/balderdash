@@ -125,7 +125,7 @@ class Row:
 
     def build(self, row_id):
         def to_panel(panel_builder):
-            return panel_builder.build(self.panels.index(panel_builder)+1, 12 / len(self.panels))
+            return panel_builder.build((row_id * 10) + (self.panels.index(panel_builder)+1), 12 / len(self.panels))
 
         return {
             "title": "Row %d" % row_id,
