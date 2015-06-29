@@ -21,6 +21,8 @@ class KibanaDashboardTest(unittest.TestCase):
         value1 = str(random.random())
         field_name2 = str(random.random())
         value2 = str(random.random())
+        field_name3 = str(random.random())
+        value3 = str(random.random())
 
         expected = {
             "list": {
@@ -51,13 +53,25 @@ class KibanaDashboardTest(unittest.TestCase):
                     "active": True,
                     "alias": "",
                     "id": 2
+                },
+                "3": {
+                    "type": "field",
+                    "field": field_name3,
+                    "query": "\"" + value3 + "\"",
+                    "mandate": "mustNot",
+                    "active": True,
+                    "alias": "",
+                    "id": 3
                 }
             },
-            "ids": [0, 1, 2]
+            "ids": [0, 1, 2, 3]
         }
 
-        self.assertEqual(expected, dg.Filter().with_field(field_name1, value1)
-                         .with_field(field_name2, value2).build())
+        self.assertEqual(expected, dg.Filter()
+                         .with_field(field_name1, value1)
+                         .with_field(field_name2, value2, dg.FilterMode.Include)
+                         .with_field(field_name3, value3, dg.FilterMode.Exclude)
+                         .build())
 
     def test_dashboard_renders(self):
         title = str(random.random())

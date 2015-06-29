@@ -1,3 +1,11 @@
+# coding=utf-8
+# Constants for the various options go here...
+
+class FilterMode:
+    Include = 'must'
+    Exclude = 'mustNot'
+
+
 class Filter:
     def __init__(self):
         self.filters = {
@@ -13,13 +21,13 @@ class Filter:
             }
         }
 
-    def with_field(self, field, value):
+    def with_field(self, field, value, filter_mode=FilterMode.Include):
         next_index = len(self.filters)
         self.filters[str(next_index)] = {
             "type": "field",
             "field": field,
             "query": "\"" + value + "\"",
-            "mandate": "must",
+            "mandate": filter_mode,
             "active": True,
             "alias": "",
             "id": next_index
