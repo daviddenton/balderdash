@@ -36,9 +36,9 @@ class FillStyle:
 
 
 class Metric:
-    def __init__(self, target, y_axis_metric_name=None):
+    def __init__(self, target, right_y_axis_metric_name=None):
         self.target = target
-        self.y_axis_metric_name = y_axis_metric_name
+        self.right_y_axis_metric_name = right_y_axis_metric_name
 
     def build(self):
         return {
@@ -58,9 +58,9 @@ class Panel:
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
-        if metric.y_axis_metric_name is not None:
+        if metric.right_y_axis_metric_name is not None:
             self.series_overrides.append({
-                "alias": metric.y_axis_metric_name,
+                "alias": metric.right_y_axis_metric_name,
                 "yaxis": 2
             })
         return self
