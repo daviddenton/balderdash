@@ -14,9 +14,16 @@ class YAxisFormat:
     Nanoseconds = 'ns'
     Percent = 'percent'
 
+
+class YAxis:
+    Left = 1
+    Right = 2
+
+
 class YAxisMinimum:
     Zero = 0
     Auto = None
+
 
 class StackStyle:
     Stacked = True
@@ -29,8 +36,9 @@ class FillStyle:
 
 
 class Metric:
-    def __init__(self, target):
+    def __init__(self, target, y_axis_metric_name=None):
         self.target = target
+        self.y_axis_metric_name = y_axis_metric_name
 
     def build(self):
         return {
@@ -46,13 +54,20 @@ class Panel:
         self.filled = filled
         self.stacked = stacked
         self.minimum = minimum
+        self.series_overrides = []
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
+        if metric.y_axis_metric_name is not None:
+            self.series_overrides.append({
+                "alias": metric.y_axis_metric_name,
+                "yaxis": 2
+            })
         return self
 
     def with_metrics(self, metrics):
-        self.metrics += metrics
+        for metric in metrics:
+            self.with_metric(metric)
         return self
 
     def build(self, panel_id, span=12):
@@ -106,7 +121,7 @@ class Panel:
             },
             "targets": self.metrics,
             "aliasColors": {},
-            "seriesOverrides": [],
+            "seriesOverrides": self.series_overrides,
             "links": []
         }
 
@@ -125,7 +140,7 @@ class Row:
 
     def build(self, row_id):
         def to_panel(panel_builder):
-            return panel_builder.build((row_id * 10) + (self.panels.index(panel_builder)+1), 12 / len(self.panels))
+            return panel_builder.build((row_id * 10) + (self.panels.index(panel_builder) + 1), 12 / len(self.panels))
 
         return {
             "title": "Row %d" % row_id,
@@ -142,7 +157,7 @@ class Dashboard:
         self.rows = []
 
     def with_row(self, row):
-        self.rows.append(row.build(len(self.rows)+1))
+        self.rows.append(row.build(len(self.rows) + 1))
         return self
 
     def with_rows(self, rows):

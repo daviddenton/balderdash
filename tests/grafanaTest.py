@@ -14,7 +14,8 @@ envname = "envname"
 
 
 def random_metric():
-    return dg.Metric(str(random.random()))
+    name = str(random.random())
+    return dg.Metric(name, y_axis_metric_name=name)
 
 
 def random_panel():
@@ -102,7 +103,13 @@ class GrafanaDashboardTest(unittest.TestCase):
             },
             "targets": [metric1.build(), metric2.build()],
             "aliasColors": {},
-            "seriesOverrides": [],
+            "seriesOverrides": [{
+                                    "alias": metric1.y_axis_metric_name,
+                                    "yaxis": 2
+                                }, {
+                                    "alias": metric2.y_axis_metric_name,
+                                    "yaxis": 2
+                                }],
             "links": []
         }
 
