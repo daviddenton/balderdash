@@ -84,7 +84,7 @@ class Panel:
             "y-axis": True,
             "y_formats": [
                 self.y_axis_format,
-                "none"
+                self.y_axis_format
             ],
             "grid": {
                 "leftMax": None,

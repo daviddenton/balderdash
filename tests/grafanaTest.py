@@ -66,7 +66,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "y-axis": True,
             "y_formats": [
                 self.yaxis,
-                "none"
+                self.yaxis
             ],
             "grid": {
                 "leftMax": None,
