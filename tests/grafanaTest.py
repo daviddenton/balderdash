@@ -118,19 +118,23 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_metric(metric2)
                          .build(self.panelId, width))
 
-    def test_row_splits_panels_evenly(self):
-        panel1 = random_panel()
-        panel2 = random_panel()
+    def test_default_type_is_graph(self):
+        self.assertEqual("graph", dg.Panel(title="bob_title").build(1, 1)["type"])
+
+    def test_can_have_type_of_singlestat(self):
+        self.assertEqual("singlestat", dg.Panel(title="bob", type="singlestat").build(1, 1)["type"])
+
+    def test_builds_singlestat_panels(self):
+        panel = random_panel()
         expected = {
             "title": "Row %d" % 1,
             "height": "250px",
             "editable": True,
             "collapse": False,
-            "panels": [panel1.build(11, 6), panel2.build(12, 6)]
+            "panels": [panel1.build(11, 6)]
         }
         self.assertEqual(expected, dg.Row()
-                         .with_panel(panel1)
-                         .with_panel(panel2)
+                         .with_panel(panel)
                          .build(1))
 
     def test_dashboard_renders(self):
