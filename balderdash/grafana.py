@@ -47,7 +47,7 @@ class Metric:
 
 
 class Panel:
-    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, type="graph"):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -55,6 +55,7 @@ class Panel:
         self.stacked = stacked
         self.minimum = minimum
         self.series_overrides = []
+        self.type = type
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
@@ -76,7 +77,7 @@ class Panel:
             "error": False,
             "span": span,
             "editable": True,
-            "type": "graph",
+            "type": self.type,
             "id": panel_id,
             "datasource": None,
             "renderer": "flot",
