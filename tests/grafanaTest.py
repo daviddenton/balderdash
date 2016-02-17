@@ -124,19 +124,6 @@ class GrafanaDashboardTest(unittest.TestCase):
     def test_can_have_type_of_singlestat(self):
         self.assertEqual("singlestat", dg.Panel(title="bob", type="singlestat").build(1, 1)["type"])
 
-    def test_builds_singlestat_panels(self):
-        panel = random_panel()
-        expected = {
-            "title": "Row %d" % 1,
-            "height": "250px",
-            "editable": True,
-            "collapse": False,
-            "panels": [panel1.build(11, 6)]
-        }
-        self.assertEqual(expected, dg.Row()
-                         .with_panel(panel)
-                         .build(1))
-
     def test_dashboard_renders(self):
         row1 = random_row()
         row2 = random_row()
