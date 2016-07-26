@@ -35,24 +35,24 @@ class GrafanaDashboardTest(unittest.TestCase):
         super(GrafanaDashboardTest, self).__init__(methodName)
         self.title = str(random.random())
         self.panelId = random.randint(1, 999)
-        self.rowId = random.randint(1, 999)
-        self.maxDiff = 100000
-        self.yaxis = random.choice([dg.YAxisFormat.Bits, dg.YAxisFormat.BitsPerSecond, dg.YAxisFormat.Bytes])
-        self.filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
-        self.stacked = random.choice([[dg.StackStyle.Stacked, dg.StackStyle.Stacked]])
-        self.target = 'target'
-        self.minimum = 5
 
     def test_metric_renders(self):
+        target = 'target'
         expected = {
-            "target": self.target
+            "target": target
         }
-        self.assertEqual(expected, dg.Metric(self.target).build())
+        self.assertEqual(expected, dg.Metric(target).build())
 
     def test_panel_renders(self):
+        yaxis = random.choice([dg.YAxisFormat.Bits, dg.YAxisFormat.BitsPerSecond, dg.YAxisFormat.Bytes])
+        filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
+        stacked = random.choice([[dg.StackStyle.Stacked, dg.StackStyle.Stacked]])
+        minimum = 5
+        
         metric1 = random_metric()
         metric2 = random_metric()
         width = random.randint(1, 100)
+
         expected = {
             "title": self.title,
             "error": False,
@@ -65,13 +65,13 @@ class GrafanaDashboardTest(unittest.TestCase):
             "x-axis": True,
             "y-axis": True,
             "y_formats": [
-                self.yaxis,
-                self.yaxis
+                yaxis,
+                yaxis
             ],
             "grid": {
                 "leftMax": None,
                 "rightMax": None,
-                "leftMin": self.minimum,
+                "leftMin": minimum,
                 "rightMin": None,
                 "threshold1": None,
                 "threshold2": None,
@@ -79,12 +79,12 @@ class GrafanaDashboardTest(unittest.TestCase):
                 "threshold2Color": "rgba(234, 112, 112, 0.22)"
             },
             "lines": True,
-            "fill": self.filled,
+            "fill": filled,
             "linewidth": 1,
             "points": False,
             "pointradius": 5,
             "bars": False,
-            "stack": self.stacked,
+            "stack": stacked,
             "percentage": False,
             "legend": {
                 "show": True,
@@ -113,10 +113,57 @@ class GrafanaDashboardTest(unittest.TestCase):
             "links": []
         }
 
-        self.assertEqual(expected, dg.Panel(self.title, self.yaxis, self.filled, self.stacked, self.minimum)
+        self.assertEqual(expected, dg.Panel(self.title, yaxis, filled, stacked, minimum)
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, width))
+
+    def test_singlestat_panel_renders(self):
+        prefix = "some prefix"
+        postfix = "some postfix"
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        expected = {
+            "title": self.title,
+            "error": False,
+            "span": 5,
+            "editable": True,
+            "type": "singlestat",
+            "id": self.panelId,
+            "links": [],
+            "maxDataPoints": 100,
+            "interval": None,
+            "targets": [metric1.build(), metric2.build()],
+            "cacheTimeout": None,
+            "format": "none",
+            "prefix": prefix,
+            "postfix": postfix,
+            "valueName": "current",
+            "prefixFontSize": "100%",
+            "valueFontSize": "120%",
+            "postfixFontSize": "100%",
+            "thresholds": "0,50,200",
+            "colorBackground": True,
+            "colorValue": False,
+            "colors": [
+                "rgba(225, 40, 40, 0.59)",
+                "rgba(245, 150, 40, 0.73)",
+                "rgba(71, 212, 59, 0.4)"
+            ],
+            "sparkline": {
+                "show": True,
+                "full": False,
+                "lineColor": "rgb(71, 248, 35)",
+                "fillColor": "rgba(130, 189, 31, 0.18)"
+            }
+        }
+
+        self.assertEqual(expected, dg.SingleStatPanel(self.title, prefix, postfix)
+                         .with_metric(metric1)
+                         .with_metric(metric2)
+                         .build(self.panelId))
+
 
     def test_row_splits_panels_evenly(self):
         panel1 = random_panel()
