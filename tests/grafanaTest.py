@@ -24,10 +24,16 @@ def random_panel():
         .with_metric(random_metric())
 
 
+def random_singlestat_panel():
+    return dg.SingleStatPanel(str(random.random()), str(random.random()), str(random.random())) \
+        .with_metric(random_metric()) \
+        .with_metric(random_metric())
+
+
 def random_row():
     return dg.Row() \
         .with_panel(random_panel()) \
-        .with_panel(random_panel())
+        .with_panel(random_singlestat_panel())
 
 
 class GrafanaDashboardTest(unittest.TestCase):
@@ -35,6 +41,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         super(GrafanaDashboardTest, self).__init__(methodName)
         self.title = str(random.random())
         self.panelId = random.randint(1, 999)
+        self.span = random.randint(1, 100)
 
     def test_metric_renders(self):
         target = 'target'
@@ -51,12 +58,11 @@ class GrafanaDashboardTest(unittest.TestCase):
         
         metric1 = random_metric()
         metric2 = random_metric()
-        width = random.randint(1, 100)
 
         expected = {
             "title": self.title,
             "error": False,
-            "span": width,
+            "span": self.span,
             "editable": True,
             "type": "graph",
             "id": self.panelId,
@@ -116,7 +122,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.assertEqual(expected, dg.Panel(self.title, yaxis, filled, stacked, minimum)
                          .with_metric(metric1)
                          .with_metric(metric2)
-                         .build(self.panelId, width))
+                         .build(self.panelId, self.span))
 
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
@@ -127,7 +133,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         expected = {
             "title": self.title,
             "error": False,
-            "span": 5,
+            "span": self.span,
             "editable": True,
             "type": "singlestat",
             "id": self.panelId,
@@ -162,8 +168,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.assertEqual(expected, dg.SingleStatPanel(self.title, prefix, postfix)
                          .with_metric(metric1)
                          .with_metric(metric2)
-                         .build(self.panelId))
-
+                         .build(self.panelId, self.span))
 
     def test_row_splits_panels_evenly(self):
         panel1 = random_panel()
@@ -246,7 +251,6 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_row(row1)
                          .with_row(row2)
                          .build())
-
 
 if __name__ == "__main__":
     unittest.main()

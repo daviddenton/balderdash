@@ -143,11 +143,11 @@ class SingleStatPanel:
             self.with_metric(metric)
         return self
 
-    def build(self, panel_id):
+    def build(self, panel_id, span=12):
         return {
             "title": self.title,
             "error": False,
-            "span": 5,
+            "span": span,
             "editable": True,
             "type": "singlestat",
             "id": panel_id,
