@@ -47,7 +47,8 @@ class Metric:
 
 
 class Panel:
-    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled, stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto):
+    def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
+                 stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -123,6 +124,59 @@ class Panel:
             "aliasColors": {},
             "seriesOverrides": self.series_overrides,
             "links": []
+        }
+
+
+class SingleStatPanel:
+    def __init__(self, title, prefix, postfix):
+        self.title = title
+        self.prefix = prefix
+        self.postfix = postfix
+        self.metrics = []
+
+    def with_metric(self, metric):
+        self.metrics.append(metric.build())
+        return self
+
+    def with_metrics(self, metrics):
+        for metric in metrics:
+            self.with_metric(metric)
+        return self
+
+    def build(self, panel_id):
+        return {
+            "title": self.title,
+            "error": False,
+            "span": 5,
+            "editable": True,
+            "type": "singlestat",
+            "id": panel_id,
+            "links": [],
+            "maxDataPoints": 100,
+            "interval": None,
+            "targets": self.metrics,
+            "cacheTimeout": None,
+            "format": "none",
+            "prefix": self.prefix,
+            "postfix": self.postfix,
+            "valueName": "current",
+            "prefixFontSize": "100%",
+            "valueFontSize": "120%",
+            "postfixFontSize": "100%",
+            "thresholds": "0,50,200",
+            "colorBackground": True,
+            "colorValue": False,
+            "colors": [
+                "rgba(225, 40, 40, 0.59)",
+                "rgba(245, 150, 40, 0.73)",
+                "rgba(71, 212, 59, 0.4)"
+            ],
+            "sparkline": {
+                "show": True,
+                "full": False,
+                "lineColor": "rgb(71, 248, 35)",
+                "fillColor": "rgba(130, 189, 31, 0.18)"
+            }
         }
 
 
