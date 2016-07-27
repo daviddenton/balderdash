@@ -128,7 +128,7 @@ class Panel:
 
 
 class SingleStatPanel:
-    def __init__(self, title, prefix, postfix):
+    def __init__(self, title, prefix="", postfix=""):
         self.title = title
         self.prefix = prefix
         self.postfix = postfix

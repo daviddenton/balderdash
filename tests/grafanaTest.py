@@ -165,7 +165,8 @@ class GrafanaDashboardTest(unittest.TestCase):
             }
         }
 
-        self.assertEqual(expected, dg.SingleStatPanel(self.title, prefix, postfix)
+        single_stat_panel = dg.SingleStatPanel(self.title, prefix=prefix, postfix=postfix)
+        self.assertEqual(expected, single_stat_panel
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, self.span))
