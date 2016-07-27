@@ -124,6 +124,16 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_metric(metric2)
                          .build(self.panelId, self.span))
 
+    def test_panel_renders_with_alias_colors(self):
+        expected = {
+            "metric1": "#color1",
+            "metric2": "#color2"
+        }
+
+        actual = bd.Panel(self.title, alias_colors=expected).build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual.get("aliasColors"))
+
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
         postfix = "some postfix"

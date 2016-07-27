@@ -58,7 +58,7 @@ class Metric:
 
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
-                 stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto):
+                 stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -66,6 +66,7 @@ class Panel:
         self.stacked = stacked
         self.minimum = minimum
         self.series_overrides = []
+        self.alias_colors = alias_colors
 
     def with_metric(self, metric):
         self.metrics.append(metric.build())
@@ -131,7 +132,7 @@ class Panel:
                 "shared": False
             },
             "targets": self.metrics,
-            "aliasColors": {},
+            "aliasColors": ({} if self.alias_colors is None else self.alias_colors),
             "seriesOverrides": self.series_overrides,
             "links": []
         }
