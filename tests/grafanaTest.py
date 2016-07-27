@@ -6,7 +6,7 @@ import unittest
 import random
 import balderdash
 
-dg = balderdash.grafana
+bd = balderdash.grafana
 
 teamname = "teamname"
 appname = "appname"
@@ -15,23 +15,23 @@ envname = "envname"
 
 def random_metric():
     name = str(random.random())
-    return dg.Metric(name, right_y_axis_metric_name=name)
+    return bd.Metric(name, right_y_axis_metric_name=name)
 
 
 def random_panel():
-    return dg.Panel(str(random.random()), str(random.random()), str(random.random()), str(random.random()), ) \
+    return bd.Panel(str(random.random()), str(random.random()), str(random.random()), str(random.random()), ) \
         .with_metric(random_metric()) \
         .with_metric(random_metric())
 
 
 def random_singlestat_panel():
-    return dg.SingleStatPanel(str(random.random()), str(random.random()), str(random.random())) \
+    return bd.SingleStatPanel(str(random.random()), str(random.random()), str(random.random())) \
         .with_metric(random_metric()) \
         .with_metric(random_metric())
 
 
 def random_row():
-    return dg.Row() \
+    return bd.Row() \
         .with_panel(random_panel()) \
         .with_panel(random_singlestat_panel())
 
@@ -48,12 +48,12 @@ class GrafanaDashboardTest(unittest.TestCase):
         expected = {
             "target": target
         }
-        self.assertEqual(expected, dg.Metric(target).build())
+        self.assertEqual(expected, bd.Metric(target).build())
 
     def test_panel_renders(self):
-        yaxis = random.choice([dg.YAxisFormat.Bits, dg.YAxisFormat.BitsPerSecond, dg.YAxisFormat.Bytes])
-        filled = random.choice([[dg.FillStyle.Filled, dg.FillStyle.Unfilled]])
-        stacked = random.choice([[dg.StackStyle.Stacked, dg.StackStyle.Stacked]])
+        yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])
+        filled = random.choice([[bd.FillStyle.Filled, bd.FillStyle.Unfilled]])
+        stacked = random.choice([[bd.StackStyle.Stacked, bd.StackStyle.Stacked]])
         minimum = 5
         
         metric1 = random_metric()
@@ -119,7 +119,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "links": []
         }
 
-        self.assertEqual(expected, dg.Panel(self.title, yaxis, filled, stacked, minimum)
+        self.assertEqual(expected, bd.Panel(self.title, yaxis, filled, stacked, minimum)
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, self.span))
@@ -127,6 +127,9 @@ class GrafanaDashboardTest(unittest.TestCase):
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
         postfix = "some postfix"
+        threshold_lower = 111
+        threshold_mid = 222
+        threshold_upper = 333
         metric1 = random_metric()
         metric2 = random_metric()
 
@@ -149,7 +152,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "prefixFontSize": "100%",
             "valueFontSize": "120%",
             "postfixFontSize": "100%",
-            "thresholds": "0,50,200",
+            "thresholds": str(threshold_lower) + "," + str(threshold_mid) + "," + str(threshold_upper),
             "colorBackground": True,
             "colorValue": False,
             "colors": [
@@ -165,7 +168,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             }
         }
 
-        single_stat_panel = dg.SingleStatPanel(self.title, prefix=prefix, postfix=postfix)
+        single_stat_panel = bd.SingleStatPanel(self.title, prefix=prefix, postfix=postfix, thresholds=bd.Thresholds(threshold_lower, threshold_mid, threshold_upper))
         self.assertEqual(expected, single_stat_panel
                          .with_metric(metric1)
                          .with_metric(metric2)
@@ -181,7 +184,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "collapse": False,
             "panels": [panel1.build(11, 6), panel2.build(12, 6)]
         }
-        self.assertEqual(expected, dg.Row()
+        self.assertEqual(expected, bd.Row()
                          .with_panel(panel1)
                          .with_panel(panel2)
                          .build(1))
@@ -248,7 +251,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "hideAllLegends": False
         }
 
-        self.assertEqual(expected, dg.Dashboard(self.title)
+        self.assertEqual(expected, bd.Dashboard(self.title)
                          .with_row(row1)
                          .with_row(row2)
                          .build())

@@ -35,6 +35,16 @@ class FillStyle:
     Unfilled = 0
 
 
+class Thresholds:
+    def __init__(self, lower, mid, upper):
+        self.lower = lower
+        self.mid = mid
+        self.upper = upper
+
+    def toCsv(self):
+        return ",".join([str(self.lower), str(self.mid), str(self.upper)])
+
+
 class Metric:
     def __init__(self, target, right_y_axis_metric_name=None):
         self.target = target
@@ -128,10 +138,11 @@ class Panel:
 
 
 class SingleStatPanel:
-    def __init__(self, title, prefix="", postfix=""):
+    def __init__(self, title, prefix="", postfix="", thresholds=Thresholds(0,50,200)):
         self.title = title
         self.prefix = prefix
         self.postfix = postfix
+        self.thresholds = thresholds
         self.metrics = []
 
     def with_metric(self, metric):
@@ -163,7 +174,7 @@ class SingleStatPanel:
             "prefixFontSize": "100%",
             "valueFontSize": "120%",
             "postfixFontSize": "100%",
-            "thresholds": "0,50,200",
+            "thresholds": self.thresholds.toCsv(),
             "colorBackground": True,
             "colorValue": False,
             "colors": [
