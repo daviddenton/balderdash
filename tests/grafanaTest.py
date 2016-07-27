@@ -168,11 +168,28 @@ class GrafanaDashboardTest(unittest.TestCase):
             }
         }
 
-        single_stat_panel = bd.SingleStatPanel(self.title, prefix=prefix, postfix=postfix, thresholds=bd.Thresholds(threshold_lower, threshold_mid, threshold_upper))
-        self.assertEqual(expected, single_stat_panel
-                         .with_metric(metric1)
-                         .with_metric(metric2)
-                         .build(self.panelId, self.span))
+        single_stat_panel = bd.SingleStatPanel(self.title, prefix=prefix, postfix=postfix,
+                                               thresholds=bd.Thresholds(threshold_lower, threshold_mid, threshold_upper),
+                                               invert_threshold_order=False)
+        actual = single_stat_panel\
+            .with_metric(metric1)\
+            .with_metric(metric2)\
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual)
+
+    def test_singlestat_panel_renders_with_inverted_thresholds(self):
+        single_stat_panel = bd.SingleStatPanel(self.title, invert_threshold_order=True)
+
+        expected = [
+            "rgba(71, 212, 59, 0.4)",
+            "rgba(245, 150, 40, 0.73)",
+            "rgba(225, 40, 40, 0.59)",
+        ]
+
+        actual = single_stat_panel.build(self.panelId, self.span)
+
+        self.assertEqual(actual.get("colors"), expected)
 
     def test_row_splits_panels_evenly(self):
         panel1 = random_panel()

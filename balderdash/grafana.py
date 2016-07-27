@@ -138,11 +138,12 @@ class Panel:
 
 
 class SingleStatPanel:
-    def __init__(self, title, prefix="", postfix="", thresholds=Thresholds(0,50,200)):
+    def __init__(self, title, prefix="", postfix="", thresholds=Thresholds(0,50,200), invert_threshold_order=False):
         self.title = title
         self.prefix = prefix
         self.postfix = postfix
         self.thresholds = thresholds
+        self.invert_threshold_order = invert_threshold_order
         self.metrics = []
 
     def with_metric(self, metric):
@@ -155,6 +156,10 @@ class SingleStatPanel:
         return self
 
     def build(self, panel_id, span=12):
+        colors = ["rgba(225, 40, 40, 0.59)", "rgba(245, 150, 40, 0.73)", "rgba(71, 212, 59, 0.4)"]
+        if self.invert_threshold_order:
+            colors.reverse()
+
         return {
             "title": self.title,
             "error": False,
@@ -177,11 +182,7 @@ class SingleStatPanel:
             "thresholds": self.thresholds.toCsv(),
             "colorBackground": True,
             "colorValue": False,
-            "colors": [
-                "rgba(225, 40, 40, 0.59)",
-                "rgba(245, 150, 40, 0.73)",
-                "rgba(71, 212, 59, 0.4)"
-            ],
+            "colors": colors,
             "sparkline": {
                 "show": True,
                 "full": False,
