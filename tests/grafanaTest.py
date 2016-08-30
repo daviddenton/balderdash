@@ -55,7 +55,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         filled = random.choice([[bd.FillStyle.Filled, bd.FillStyle.Unfilled]])
         stacked = random.choice([[bd.StackStyle.Stacked, bd.StackStyle.Stacked]])
         minimum = 5
-        
+
         metric1 = random_metric()
         metric2 = random_metric()
 
@@ -110,12 +110,12 @@ class GrafanaDashboardTest(unittest.TestCase):
             "targets": [metric1.build(), metric2.build()],
             "aliasColors": {},
             "seriesOverrides": [{
-                                    "alias": metric1.right_y_axis_metric_name,
-                                    "yaxis": 2
-                                }, {
-                                    "alias": metric2.right_y_axis_metric_name,
-                                    "yaxis": 2
-                                }],
+                "alias": metric1.right_y_axis_metric_name,
+                "yaxis": 2
+            }, {
+                "alias": metric2.right_y_axis_metric_name,
+                "yaxis": 2
+            }],
             "links": []
         }
 
@@ -181,9 +181,9 @@ class GrafanaDashboardTest(unittest.TestCase):
         single_stat_panel = bd.SingleStatPanel(self.title, prefix=prefix, postfix=postfix,
                                                thresholds=bd.Thresholds(threshold_lower, threshold_mid, threshold_upper),
                                                invert_threshold_order=False)
-        actual = single_stat_panel\
-            .with_metric(metric1)\
-            .with_metric(metric2)\
+        actual = single_stat_panel \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
             .build(self.panelId, self.span)
 
         self.assertEqual(expected, actual)
@@ -278,10 +278,43 @@ class GrafanaDashboardTest(unittest.TestCase):
             "hideAllLegends": False
         }
 
-        self.assertEqual(expected, bd.Dashboard(self.title)
-                         .with_row(row1)
-                         .with_row(row2)
-                         .build())
+        actual = bd.Dashboard(self.title) \
+            .with_row(row1) \
+            .with_row(row2)\
+            .build()
+
+        self.assertEqual(expected, actual)
+
+    def test_dashboard_with_customised_time_range(self):
+        expected = {
+            "from": "now-2d",
+            "to": "now-1h"
+        }
+
+        actual = bd.Dashboard(self.title) \
+            .with_time_range("now-2d", "now-1h") \
+            .build()
+
+        self.assertEqual(expected, actual["time"])
+
+    def test_dashboard_with_customised_nav_time_options(self):
+        expected = ["1h", "12h", "7d"]
+
+        actual = bd.Dashboard(self.title) \
+            .with_nav_time_options(["1h", "12h", "7d"]) \
+            .build()
+
+        self.assertEqual(expected, actual["nav"][0]["time_options"])
+
+    def test_dashboard_with_customised_nav_refresh_intervals(self):
+        expected = ["1m", "1h", "1d"]
+
+        actual = bd.Dashboard(self.title) \
+            .with_nav_refresh_intervals(["1m", "1h", "1d"]) \
+            .build()
+
+        self.assertEqual(expected, actual["nav"][0]["refresh_intervals"])
+
 
 if __name__ == "__main__":
     unittest.main()
