@@ -216,6 +216,17 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_panel(panel2)
                          .build(1))
 
+    def test_row_height(self):
+        expected = {
+            "title": "Row %d" % 1,
+            "height": "123px",
+            "editable": True,
+            "collapse": False,
+            "panels": []
+        }
+        self.assertEqual(expected, bd.Row(height="123px")
+                         .build(1))
+
     def test_dashboard_renders(self):
         row1 = random_row()
         row2 = random_row()
