@@ -326,6 +326,13 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual["nav"][0]["refresh_intervals"])
 
+    def test_dashboard_write_request_renders(self):
+        dashboard = bd.Dashboard(self.title)
+        actual = bd.DashboardWriteRequest(dashboard) \
+            .build()
+
+        self.assertEqual(dashboard.build(), actual["dashboard"])
+        self.assertEqual(True, actual["overwrite"])
 
 if __name__ == "__main__":
     unittest.main()

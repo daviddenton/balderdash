@@ -12,3 +12,9 @@ See the [example code](https://github.com/daviddenton/balderdash/tree/master/exa
 pip install balderdash
 ```
 
+###Publish it:
+ - Ensure you've got ~/.pypirc setup with your username
+ - Update version in ./setup.py
+ - Run ./publish.sh
+ - Enter your PyPI password (twice)
+ - Check it appears on [on PyPI](https://pypi.python.org/pypi/balderdash/)
