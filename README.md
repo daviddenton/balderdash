@@ -15,6 +15,6 @@ pip install balderdash
 ###Publish it:
  - Ensure you've got ~/.pypirc setup with your username
  - Update version in ./setup.py
- - Run ./publish.sh
+ - Run `./publish.sh <version>`
  - Enter your PyPI password (twice)
  - Check it appears on [on PyPI](https://pypi.python.org/pypi/balderdash/)
