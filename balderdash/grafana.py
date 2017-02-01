@@ -59,13 +59,14 @@ class Metric:
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
-                 span=None):
+                 span=None, maximum=None):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
         self.filled = filled
         self.stacked = stacked
         self.minimum = minimum
+        self.maximum = maximum
         self.series_overrides = []
         self.alias_colors = alias_colors
         self.span = span
@@ -101,7 +102,7 @@ class Panel:
                 self.y_axis_format
             ],
             "grid": {
-                "leftMax": None,
+                "leftMax": self.maximum,
                 "rightMax": None,
                 "leftMin": self.minimum,
                 "rightMin": None,
