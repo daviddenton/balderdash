@@ -5,10 +5,10 @@ import unittest
 import random
 import balderdash
 
-dg = balderdash.kibana
+bd = balderdash.kibana
 
 def randomFilter():
-    return dg.Filter() \
+    return bd.Filter() \
         .with_field(str(random.random),str(random.random))
 
 class KibanaDashboardTest(unittest.TestCase):
@@ -67,11 +67,31 @@ class KibanaDashboardTest(unittest.TestCase):
             "ids": [0, 1, 2, 3]
         }
 
-        self.assertEqual(expected, dg.Filter()
+        self.assertEqual(expected, bd.Filter()
                          .with_field(field_name1, value1)
-                         .with_field(field_name2, value2, dg.FilterMode.Include)
-                         .with_field(field_name3, value3, dg.FilterMode.Exclude)
+                         .with_field(field_name2, value2, bd.FilterMode.Include)
+                         .with_field(field_name3, value3, bd.FilterMode.Exclude)
                          .build())
+
+    def test_query_renders(self):
+        expected = {
+            "list": {
+                "0": {
+                    "query": "service:\"some-service\" AND environment:\"live\"",
+                    "alias": "",
+                    "color": "#7EB26D",
+                    "id": 0,
+                    "pin": False,
+                    "type": "lucene",
+                    "enable": True
+                }
+            },
+            "ids": [0]
+        }
+
+        self.assertEqual(expected, bd.Dashboard("")
+                         .with_query("service:\"some-service\" AND environment:\"live\"")
+                         .build()["services"]["query"])
 
     def test_dashboard_renders(self):
         title = str(random.random())
@@ -312,7 +332,7 @@ class KibanaDashboardTest(unittest.TestCase):
             "refresh": "30s"
         }
 
-        self.assertEqual(expected, dg.Dashboard(title).with_filter(filter)
+        self.assertEqual(expected, bd.Dashboard(title).with_filter(filter)
                          .with_fields(fields).build())
 
 

@@ -45,10 +45,15 @@ class Dashboard:
     def __init__(self, title):
         self.title = title
         self.filter = Filter()
+        self.query = ""
         self.fields = []
 
     def with_filter(self, new_filter):
         self.filter = new_filter
+        return self
+
+    def with_query(self, value):
+        self.query = value
         return self
 
     def with_fields(self, fields):
@@ -62,7 +67,7 @@ class Dashboard:
                 "query": {
                     "list": {
                         "0": {
-                            "query": "",
+                            "query": self.query,
                             "alias": "",
                             "color": "#7EB26D",
                             "id": 0,
