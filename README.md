@@ -14,6 +14,7 @@ pip install balderdash
 
 ###Publish it:
  - Ensure you've got ~/.pypirc setup with your username
+ - If your ~/.pypirc defines your repository as www.python.org/pypi, delete that line. It's wrong.
  - Update version in ./setup.py
  - Run `./publish.sh <version>`
  - Enter your PyPI password (twice)
