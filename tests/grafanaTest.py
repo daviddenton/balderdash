@@ -123,6 +123,30 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, self.span))
+
+    def test_panel_renders_with_specific_maximum(self):
+        yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])
+        filled = random.choice([[bd.FillStyle.Filled, bd.FillStyle.Unfilled]])
+        stacked = random.choice([[bd.StackStyle.Stacked, bd.StackStyle.Stacked]])
+        minimum = 5
+        maximum = 15
+
+        expected_grid = {
+            "leftMax": 15,
+            "rightMax": None,
+            "leftMin": minimum,
+            "rightMin": None,
+            "threshold1": None,
+            "threshold2": None,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+        }
+
+        self.assertEqual(expected_grid, bd.Panel(self.title, yaxis, filled, stacked, minimum, maximum=maximum)
+                         .with_metric(random_metric())
+                         .with_metric(random_metric())
+                         .build(self.panelId, self.span)['grid'])
+
     def test_panel_renders_with_alias_colors(self):
         expected = {
             "metric1": "#color1",
