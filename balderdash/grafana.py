@@ -194,9 +194,10 @@ class SingleStatPanel:
 
 
 class Row:
-    def __init__(self, height="250px"):
+    def __init__(self, height="250px", title=None):
         self.panels = []
         self.height = height
+        self.title = title
 
     def with_panel(self, panel):
         self.panels.append(panel)
@@ -211,7 +212,7 @@ class Row:
             return panel_builder.build((row_id * 10) + (self.panels.index(panel_builder) + 1), 12 / len(self.panels))
 
         return {
-            "title": "Row %d" % row_id,
+            "title": self.title or "Row %d" % row_id,
             "height": self.height,
             "editable": True,
             "collapse": False,
