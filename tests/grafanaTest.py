@@ -216,6 +216,21 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_panel(panel2)
                          .build(1))
 
+    def test_row_can_be_named(self):
+        panel1 = random_panel()
+        panel2 = random_panel()
+        expected = {
+            "title": "Row of magical nameliness",
+            "height": "250px",
+            "editable": True,
+            "collapse": False,
+            "panels": [panel1.build(11, 6), panel2.build(12, 6)]
+        }
+        self.assertEqual(expected, bd.Row(title='Row of magical nameliness')
+                         .with_panel(panel1)
+                         .with_panel(panel2)
+                         .build(1))
+
     def test_row_height(self):
         expected = {
             "title": "Row %d" % 1,
