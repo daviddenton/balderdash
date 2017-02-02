@@ -238,7 +238,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "notifications": []
         }
 
-        actual = bd.Panel(self.title, alias_colors=expected) \
+        actual = bd.Panel(self.title) \
             .with_metric(metric1) \
             .with_metric(metric2) \
             .with_alert(bd.Alert('a test alert', 55)
@@ -247,6 +247,67 @@ class GrafanaDashboardTest(unittest.TestCase):
             .build(self.panelId, self.span)
 
         self.assertEqual(expected, actual.get("alert"))
+
+    def test_panel_renders_an_alert_with_a_reducer(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        expected_conditions = [
+                {
+                    "evaluator": {
+                        "params": [0],
+                        "type": "gt"
+                    },
+                    "operator": {
+                        "type": "and"
+                    },
+                    "query": {
+                        "datasourceId": 1,
+                        "model": {
+                            "refId": "A",
+                            "target": metric1.target
+                        },
+                        "params": ["A", "5m", "now"]
+                    },
+                    "reducer": {
+                        "params": [],
+                        "type": "avg"
+                    },
+                    "type": "query"
+                },
+                {
+                    "evaluator": {
+                        "params": [3],
+                        "type": "lt"
+                    },
+                    "operator": {
+                        "type": "or"
+                    },
+                    "query": {
+                        "datasourceId": 1,
+                        "model": {
+                            "refId": "B",
+                            "target": metric2.target
+                        },
+                        "params": ["B", "5m", "now"]
+                    },
+                    "reducer": {
+                        "params": [],
+                        "type": "min"
+                    },
+                    "type": "query"
+                }
+            ]
+
+        actual = bd.Panel(self.title) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55)
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 0, reducer=bd.Reducer.Average))
+                        .with_condition(bd.Condition(metric2, bd.EvaluatorType.LessThan, 3, bd.OperatorType.Or, reducer=bd.Reducer.Min))) \
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected_conditions, actual['alert']['conditions'])
 
     def test_panel_renders_an_alert_with_a_notification(self):
         metric1 = random_metric()
@@ -261,7 +322,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             }
         ]
 
-        actual = bd.Panel(self.title, alias_colors=expected) \
+        actual = bd.Panel(self.title) \
             .with_metric(metric1) \
             .with_metric(metric2) \
             .with_alert(bd.Alert('a test alert', 55)

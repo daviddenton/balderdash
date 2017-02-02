@@ -58,6 +58,16 @@ class OperatorType:
     Or = 'or'
 
 
+class Reducer:
+    Average = 'avg'
+    Count = 'count'
+    Last = 'last'
+    Median = 'median'
+    Max = 'max'
+    Min = 'min'
+    Sum = 'sum'
+
+
 class Notification:
     def __init__(self, notification_id):
         self.notification_id = notification_id
@@ -69,11 +79,12 @@ class Notification:
 
 
 class Condition:
-    def __init__(self, metric, evaluator_type, value, operator_type = OperatorType.And):
+    def __init__(self, metric, evaluator_type, value, operator_type=OperatorType.And, reducer=Reducer.Last):
         self.metric = metric
         self.evaluator_type = evaluator_type
         self.value = value
         self.operator_type = operator_type
+        self.reducer = reducer
 
     def build(self, panel_metrics):
         matching_metric = filter(lambda possible_metric: possible_metric['target'] == self.metric.target, panel_metrics).pop(0)
@@ -95,7 +106,7 @@ class Condition:
             },
             "reducer": {
                 "params": [],
-                "type": "last"
+                "type": self.reducer
             },
             "type": "query"
         }
