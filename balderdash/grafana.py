@@ -58,6 +58,16 @@ class OperatorType:
     Or = 'or'
 
 
+class Notification:
+    def __init__(self, notification_id):
+        self.notification_id = notification_id
+
+    def build(self):
+        return {
+            'id': self.notification_id
+        }
+
+
 class Condition:
     def __init__(self, metric, evaluator_type, value, operator_type = OperatorType.And):
         self.metric = metric
@@ -108,14 +118,14 @@ class Alert:
         self.name = name
         self.frequency = frequency
         self.conditions = []
+        self.notifications = []
+
+    def with_notification(self, notification):
+        self.notifications.append(notification)
+        return self
 
     def with_condition(self, condition):
         self.conditions.append(condition)
-        return self
-
-    def with_targets(self, conditions):
-        for condition in conditions:
-            self.with_condition(condition)
         return self
 
     def build(self, panel_metrics):
@@ -126,7 +136,7 @@ class Alert:
              "handler": 1,
              "name": self.name,
              "noDataState": "no_data",
-             "notifications": []
+             "notifications": map(lambda notification: notification.build(), self.notifications)
          }
 
 

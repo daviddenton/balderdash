@@ -238,15 +238,39 @@ class GrafanaDashboardTest(unittest.TestCase):
             "notifications": []
         }
 
-        actual = bd.Panel(self.title, alias_colors=expected)\
-            .with_metric(metric1)\
-            .with_metric(metric2)\
+        actual = bd.Panel(self.title, alias_colors=expected) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
             .with_alert(bd.Alert('a test alert', 55)
                         .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 0))
-                        .with_condition(bd.Condition(metric2, bd.EvaluatorType.LessThan, 3, bd.OperatorType.Or)))\
+                        .with_condition(bd.Condition(metric2, bd.EvaluatorType.LessThan, 3, bd.OperatorType.Or))) \
             .build(self.panelId, self.span)
 
         self.assertEqual(expected, actual.get("alert"))
+
+    def test_panel_renders_an_alert_with_a_notification(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        expected = [
+            {
+                "id": 1
+            },
+            {
+                "id": 2
+            }
+        ]
+
+        actual = bd.Panel(self.title, alias_colors=expected) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55)
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 5))
+                        .with_notification(bd.Notification(1))
+                        .with_notification(bd.Notification(2))) \
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual['alert']['notifications'])
 
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
@@ -293,7 +317,8 @@ class GrafanaDashboardTest(unittest.TestCase):
         }
 
         single_stat_panel = bd.SingleStatPanel(self.title, prefix=prefix, postfix=postfix,
-                                               thresholds=bd.Thresholds(threshold_lower, threshold_mid, threshold_upper),
+                                               thresholds=bd.Thresholds(threshold_lower, threshold_mid,
+                                                                        threshold_upper),
                                                invert_threshold_order=False)
         actual = single_stat_panel \
             .with_metric(metric1) \
@@ -365,7 +390,8 @@ class GrafanaDashboardTest(unittest.TestCase):
 
     def test_row_respects_specific_panel_span(self):
         def random_panel_with_span(span):
-            return bd.Panel(str(random.random()), str(random.random()), str(random.random()), str(random.random()), span=span) \
+            return bd.Panel(str(random.random()), str(random.random()), str(random.random()), str(random.random()),
+                            span=span) \
                 .with_metric(random_metric()) \
                 .with_metric(random_metric())
 
@@ -476,7 +502,7 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         actual = bd.Dashboard(self.title) \
             .with_row(row1) \
-            .with_row(row2)\
+            .with_row(row2) \
             .build()
 
         self.assertEqual(expected, actual)
@@ -518,6 +544,7 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(dashboard.build(), actual["dashboard"])
         self.assertEqual(True, actual["overwrite"])
+
 
 if __name__ == "__main__":
     unittest.main()
