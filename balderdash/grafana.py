@@ -45,6 +45,52 @@ class Thresholds:
         return ",".join([str(self.lower), str(self.mid), str(self.upper)])
 
 
+class EvaluatorType:
+    GreaterThan = 'gt'
+    LessThan = 'lt'
+    Outside = 'outside_range'
+    Within = 'within_range'
+    NoValue = 'no_value'
+
+
+class OperatorType:
+    And = 'and'
+    Or = 'or'
+
+
+class Condition:
+    def __init__(self, metric, evaluator_type, value, operator_type = OperatorType.And):
+        self.metric = metric
+        self.evaluator_type = evaluator_type
+        self.value = value
+        self.operator_type = operator_type
+
+    def build(self, panel_metrics):
+        matching_metric = filter(lambda possible_metric: possible_metric['target'] == self.metric.target, panel_metrics).pop(0)
+        return {
+            "evaluator": {
+                "params": [self.value],
+                "type": self.evaluator_type
+            },
+            "operator": {
+                "type": self.operator_type
+            },
+            "query": {
+                "datasourceId": 1,
+                "model": {
+                    "refId": matching_metric['refId'],
+                    "target": matching_metric['target']
+                },
+                "params": [matching_metric['refId'], "5m", "now"]
+            },
+            "reducer": {
+                "params": [],
+                "type": "last"
+            },
+            "type": "query"
+        }
+
+
 class Metric:
     def __init__(self, target, right_y_axis_metric_name=None):
         self.target = target
@@ -57,6 +103,33 @@ class Metric:
         }
 
 
+class Alert:
+    def __init__(self, name, frequency):
+        self.name = name
+        self.frequency = frequency
+        self.conditions = []
+
+    def with_condition(self, condition):
+        self.conditions.append(condition)
+        return self
+
+    def with_targets(self, conditions):
+        for condition in conditions:
+            self.with_condition(condition)
+        return self
+
+    def build(self, panel_metrics):
+        return {
+             "conditions": map(lambda condition: condition.build(panel_metrics), self.conditions),
+             "executionErrorState": "alerting",
+             "frequency": "%ds" % self.frequency,
+             "handler": 1,
+             "name": self.name,
+             "noDataState": "no_data",
+             "notifications": []
+         }
+
+
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
@@ -64,6 +137,7 @@ class Panel:
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
+        self.alert = None
         self.filled = filled
         self.stacked = stacked
         self.minimum = minimum
@@ -88,8 +162,12 @@ class Panel:
             self.with_metric(metric)
         return self
 
+    def with_alert(self, alert):
+        self.alert = alert
+        return self
+
     def build(self, panel_id, span=12):
-        return {
+        panel = {
             "title": self.title,
             "error": False,
             "span": self.span or span,
@@ -142,6 +220,9 @@ class Panel:
             "seriesOverrides": self.series_overrides,
             "links": []
         }
+        if self.alert:
+            panel['alert'] = self.alert.build(self.metrics)
+        return panel
 
 
 class SingleStatPanel:
