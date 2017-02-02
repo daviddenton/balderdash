@@ -50,8 +50,9 @@ class Metric:
         self.target = target
         self.right_y_axis_metric_name = right_y_axis_metric_name
 
-    def build(self):
+    def build(self, ref_id):
         return {
+            "refId": ref_id,
             "target": self.target
         }
 
@@ -71,8 +72,10 @@ class Panel:
         self.alias_colors = alias_colors
         self.span = span
 
+        self.available_ref_ids = map(chr, range(65, 91))
+
     def with_metric(self, metric):
-        self.metrics.append(metric.build())
+        self.metrics.append(metric.build(self.available_ref_ids.pop(0)))
         if metric.right_y_axis_metric_name is not None:
             self.series_overrides.append({
                 "alias": metric.right_y_axis_metric_name,
@@ -150,8 +153,10 @@ class SingleStatPanel:
         self.invert_threshold_order = invert_threshold_order
         self.metrics = []
 
+        self.available_ref_ids = map(chr, range(65, 91))
+
     def with_metric(self, metric):
-        self.metrics.append(metric.build())
+        self.metrics.append(metric.build(self.available_ref_ids.pop(0)))
         return self
 
     def with_metrics(self, metrics):

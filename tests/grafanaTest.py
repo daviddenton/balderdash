@@ -46,9 +46,10 @@ class GrafanaDashboardTest(unittest.TestCase):
     def test_metric_renders(self):
         target = 'target'
         expected = {
+            "refId": 'A',
             "target": target
         }
-        self.assertEqual(expected, bd.Metric(target).build())
+        self.assertEqual(expected, bd.Metric(target).build('A'))
 
     def test_panel_renders(self):
         yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])
@@ -107,7 +108,7 @@ class GrafanaDashboardTest(unittest.TestCase):
                 "value_type": "cumulative",
                 "shared": False
             },
-            "targets": [metric1.build(), metric2.build()],
+            "targets": [metric1.build('A'), metric2.build('B')],
             "aliasColors": {},
             "seriesOverrides": [{
                 "alias": metric1.right_y_axis_metric_name,
@@ -157,6 +158,28 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual.get("aliasColors"))
 
+    def test_panel_renders_with_target_refids(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        expected = [
+            {
+                "refId": "A",
+                "target": metric1.target
+            },
+            {
+                "refId": "B",
+                "target": metric2.target
+            }
+        ]
+
+        actual = bd.Panel(self.title, alias_colors=expected)\
+            .with_metric(metric1)\
+            .with_metric(metric2)\
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual.get("targets"))
+
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
         postfix = "some postfix"
@@ -176,7 +199,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "links": [],
             "maxDataPoints": 100,
             "interval": None,
-            "targets": [metric1.build(), metric2.build()],
+            "targets": [metric1.build('A'), metric2.build('B')],
             "cacheTimeout": None,
             "format": "none",
             "prefix": prefix,
