@@ -333,6 +333,20 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual['alert']['notifications'])
 
+    def test_panel_renders_an_alert_with_a_message(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        actual = bd.Panel(self.title) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55, message='An alert message')
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 5))
+                        .with_notification(bd.Notification(1)))\
+            .build(self.panelId, self.span)
+
+        self.assertEqual('An alert message', actual['alert']['message'])
+
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
         postfix = "some postfix"

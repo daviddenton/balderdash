@@ -125,9 +125,10 @@ class Metric:
 
 
 class Alert:
-    def __init__(self, name, frequency):
+    def __init__(self, name, frequency, message=None):
         self.name = name
         self.frequency = frequency
+        self.message = message
         self.conditions = []
         self.notifications = []
 
@@ -140,15 +141,18 @@ class Alert:
         return self
 
     def build(self, panel_metrics):
-        return {
-             "conditions": map(lambda condition: condition.build(panel_metrics), self.conditions),
-             "executionErrorState": "alerting",
-             "frequency": "%ds" % self.frequency,
-             "handler": 1,
-             "name": self.name,
-             "noDataState": "no_data",
-             "notifications": map(lambda notification: notification.build(), self.notifications)
-         }
+        alert = {
+            "conditions": map(lambda condition: condition.build(panel_metrics), self.conditions),
+            "executionErrorState": "alerting",
+            "frequency": "%ds" % self.frequency,
+            "handler": 1,
+            "name": self.name,
+            "noDataState": "no_data",
+            "notifications": map(lambda notification: notification.build(), self.notifications)
+        }
+        if self.message:
+            alert['message'] = self.message
+        return alert
 
 
 class Panel:
