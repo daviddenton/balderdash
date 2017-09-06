@@ -1,3 +1,3 @@
 # coding=utf-8
-import kibana as kibana
-import grafana as grafana
+from . import kibana as kibana
+from . import grafana as grafana

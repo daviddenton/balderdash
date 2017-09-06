@@ -87,7 +87,8 @@ class Condition:
         self.reducer = reducer
 
     def build(self, panel_metrics):
-        matching_metric = filter(lambda possible_metric: possible_metric['target'] == self.metric.target, panel_metrics).pop(0)
+        filtered = filter(lambda possible_metric: possible_metric['target'] == self.metric.target, panel_metrics)
+        matching_metric = list(filtered).pop(0)
         return {
             "evaluator": {
                 "params": [self.value],
@@ -142,13 +143,13 @@ class Alert:
 
     def build(self, panel_metrics):
         alert = {
-            "conditions": map(lambda condition: condition.build(panel_metrics), self.conditions),
+            "conditions": list(map(lambda condition: condition.build(panel_metrics), self.conditions)),
             "executionErrorState": "alerting",
             "frequency": "%ds" % self.frequency,
             "handler": 1,
             "name": self.name,
             "noDataState": "no_data",
-            "notifications": map(lambda notification: notification.build(), self.notifications)
+            "notifications": list(map(lambda notification: notification.build(), self.notifications))
         }
         if self.message:
             alert['message'] = self.message
@@ -171,7 +172,7 @@ class Panel:
         self.alias_colors = alias_colors
         self.span = span
 
-        self.available_ref_ids = map(chr, range(65, 91))
+        self.available_ref_ids = list(map(chr, range(65, 91)))
 
     def with_metric(self, metric):
         self.metrics.append(metric.build(self.available_ref_ids.pop(0)))
@@ -259,7 +260,7 @@ class SingleStatPanel:
         self.invert_threshold_order = invert_threshold_order
         self.metrics = []
 
-        self.available_ref_ids = map(chr, range(65, 91))
+        self.available_ref_ids = list(map(chr, range(65, 91)))
 
     def with_metric(self, metric):
         self.metrics.append(metric.build(self.available_ref_ids.pop(0)))
@@ -333,7 +334,7 @@ class Row:
             "editable": True,
             "collapse": self.collapse,
             "showTitle": self.show_title,
-            "panels": map(to_panel, self.panels)
+            "panels": list(map(to_panel, self.panels))
         }
 
 

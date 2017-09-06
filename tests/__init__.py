@@ -1,2 +1,2 @@
-import grafanaTest
-import kibanaTest
+from . import grafanaTest
+from . import kibanaTest
