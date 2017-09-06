@@ -37,7 +37,7 @@ class Filter:
     def build(self):
         return {
             "list": self.filters,
-            "ids": range(0, len(self.filters))
+            "ids": list(range(0, len(self.filters)))
         }
 
 
