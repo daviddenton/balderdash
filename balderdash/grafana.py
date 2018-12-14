@@ -159,7 +159,7 @@ class Alert:
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
-                 span=None, maximum=None):
+                 span=None, maximum=None, datasource=None):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -171,6 +171,7 @@ class Panel:
         self.series_overrides = []
         self.alias_colors = alias_colors
         self.span = span
+        self.datasource = datasource
 
         self.available_ref_ids = list(map(chr, range(65, 91)))
 
@@ -200,7 +201,7 @@ class Panel:
             "editable": True,
             "type": "graph",
             "id": panel_id,
-            "datasource": None,
+            "datasource": self.datasource,
             "renderer": "flot",
             "x-axis": True,
             "y-axis": True,
