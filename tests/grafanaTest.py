@@ -148,6 +148,13 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_metric(random_metric())
                          .build(self.panelId, self.span)['grid'])
 
+    def test_panel_renders_with_datasource(self):
+        expected = "a-datasource"
+
+        actual = bd.Panel(self.title, datasource=expected).build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual.get("datasource"))
+
     def test_panel_renders_with_alias_colors(self):
         expected = {
             "metric1": "#color1",
