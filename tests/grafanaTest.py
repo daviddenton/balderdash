@@ -354,6 +354,34 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual('An alert message', actual['alert']['message'])
 
+    def test_panel_renders_an_alert_with_a_specified_no_data_state(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        actual = bd.Panel(self.title) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55, no_data_state=bd.NoDataState.Alerting)
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 5))
+                        .with_notification(bd.Notification(1)))\
+            .build(self.panelId, self.span)
+
+        self.assertEqual('alerting', actual['alert']['noDataState'])
+
+    def test_panel_renders_an_alert_with_a_specified_execution_error_state(self):
+        metric1 = random_metric()
+        metric2 = random_metric()
+
+        actual = bd.Panel(self.title) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55, execution_error_state=bd.ExecutionErrorState.KeepState)
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 5))
+                        .with_notification(bd.Notification(1)))\
+            .build(self.panelId, self.span)
+
+        self.assertEqual('keep_state', actual['alert']['executionErrorState'])
+
     def test_singlestat_panel_renders(self):
         prefix = "some prefix"
         postfix = "some postfix"

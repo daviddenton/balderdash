@@ -68,6 +68,18 @@ class Reducer:
     Sum = 'sum'
 
 
+class NoDataState:
+    Alerting = 'alerting'
+    KeepState = 'keep_state'
+    NoData = 'no_data'
+    Ok = 'ok'
+
+
+class ExecutionErrorState:
+    Alerting = 'alerting'
+    KeepState = 'keep_state'
+
+
 class Notification:
     def __init__(self, notification_id):
         self.notification_id = notification_id
@@ -126,12 +138,14 @@ class Metric:
 
 
 class Alert:
-    def __init__(self, name, frequency, message=None):
+    def __init__(self, name, frequency, message=None, no_data_state=NoDataState.NoData, execution_error_state=ExecutionErrorState.Alerting):
         self.name = name
         self.frequency = frequency
         self.message = message
         self.conditions = []
         self.notifications = []
+        self.no_data_state = no_data_state
+        self.execution_error_state = execution_error_state
 
     def with_notification(self, notification):
         self.notifications.append(notification)
@@ -144,11 +158,11 @@ class Alert:
     def build(self, panel_metrics):
         alert = {
             "conditions": list(map(lambda condition: condition.build(panel_metrics), self.conditions)),
-            "executionErrorState": "alerting",
+            "executionErrorState": self.execution_error_state,
             "frequency": "%ds" % self.frequency,
             "handler": 1,
             "name": self.name,
-            "noDataState": "no_data",
+            "noDataState": self.no_data_state,
             "notifications": list(map(lambda notification: notification.build(), self.notifications))
         }
         if self.message:
