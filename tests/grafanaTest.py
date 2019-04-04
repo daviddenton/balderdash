@@ -186,6 +186,30 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual.get("targets"))
 
+    def test_panel_renders_with_hidden_metric(self):
+        metric1 = random_metric()
+
+        metric2_name = str(random.random())
+        metric2 = bd.Metric(metric2_name, right_y_axis_metric_name=metric2_name, hide=True)
+
+        expected = [
+            {
+                "refId": "A",
+                "target": metric1.target
+            },
+            {
+                "hide": True,
+                "refId": "B",
+                "target": metric2.target
+            }
+        ]
+        actual = bd.Panel(self.title, alias_colors=expected) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual.get("targets"))
+
     def test_panel_renders_an_alert(self):
         metric1 = random_metric()
         metric2 = random_metric()
