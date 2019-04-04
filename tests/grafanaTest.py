@@ -647,6 +647,49 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual["nav"][0]["refresh_intervals"])
 
+    def test_dashboard_with_custom_variable(self):
+        expected = [
+            {
+                "allValue": None,
+                "current": {
+                    "tags": [],
+                    "text": "default-value",
+                    "value": "default-value"
+                },
+                "hide": 0,
+                "includeAll": False,
+                "label": "A Var",
+                "multi": False,
+                "name": "a-var",
+                "options": [
+                    {
+                        "selected": True,
+                        "text": "default-value",
+                        "value": "default-value"
+                    },
+                    {
+                        "selected": False,
+                        "text": "value2",
+                        "value": "value2"
+                    },
+                    {
+                        "selected": False,
+                        "text": "value3",
+                        "value": "value3"
+                    }
+                ],
+                "query": "default-value,value2,value3",
+                "skipUrlSync": False,
+                "type": "custom"
+            }
+        ]
+
+        actual = bd.Dashboard(self.title) \
+            .with_variable(bd.CustomVariable('a-var', 'A Var', 'default-value', 'value2', 'value3')) \
+            .build()
+
+        self.assertEqual(expected, actual["templating"]["list"])
+
     def test_dashboard_write_request_renders(self):
         dashboard = bd.Dashboard(self.title)
         actual = bd.DashboardWriteRequest(dashboard) \

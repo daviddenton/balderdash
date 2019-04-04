@@ -323,6 +323,42 @@ class SingleStatPanel:
         }
 
 
+class CustomVariable:
+    def __init__(self, name, label, default_value, *other_values):
+        self.name = name
+        self.label = label
+        self.default_value = default_value
+        self.other_values = other_values
+
+    def _as_option(self, value, selected=False):
+        return {
+                "selected": selected,
+                "text": value,
+                "value": value
+            }
+
+    def build(self):
+        options = [self._as_option(self.default_value, selected=True)] + \
+            [self._as_option(value) for value in self.other_values]
+
+        return {
+            "allValue": None,
+            "current": {
+                "tags": [],
+                "text": self.default_value,
+                "value": self.default_value
+            },
+            "hide": 0,
+            "includeAll": False,
+            "label": self.label,
+            "multi": False,
+            "name": self.name,
+            "options": options,
+            "query": ",".join([self.default_value] + list(self.other_values)),
+            "skipUrlSync": False,
+            "type": "custom"
+      }
+
 class Row:
     def __init__(self, height="250px", title=None, show_title=False, collapse=False):
         self.panels = []
@@ -354,7 +390,7 @@ class Row:
 
 
 class Dashboard:
-    def __init__(self, title):
+    def __init__(self, title, variables=[]):
         self.title = title
         self.rows = []
         self.time = {
@@ -363,6 +399,7 @@ class Dashboard:
         }
         self.time_options = ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
         self.refresh_intervals = ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+        self.variables = variables
 
     def with_row(self, row):
         self.rows.append(row.build(len(self.rows) + 1))
@@ -383,6 +420,10 @@ class Dashboard:
 
     def with_nav_refresh_intervals(self, options):
         self.refresh_intervals = options
+        return self
+
+    def with_variable(self, variable):
+        self.variables += [variable]
         return self
 
     def build(self):
@@ -410,7 +451,7 @@ class Dashboard:
             ],
             "time": self.time,
             "templating": {
-                "list": []
+                "list": [variable.build() for variable in self.variables]
             },
             "annotations": {
                 "list": [],
