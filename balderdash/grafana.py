@@ -80,6 +80,21 @@ class ExecutionErrorState:
     KeepState = 'keep_state'
 
 
+class VariableRefresh:
+    Never = 0
+    OnDashboardLoad = 1
+    OnTimeRangeChange = 2
+
+class VariableSort:
+    Disabled = 0
+    AlphaAsc = 1
+    AlphaDesc = 2
+    NumericalAsc = 3
+    NumericalDesc = 4
+    AlphaCaseInsensitiveAsc = 5
+    AlphaCaseInsensitiveDesc = 6
+
+
 class Notification:
     def __init__(self, notification_id):
         self.notification_id = notification_id
@@ -326,6 +341,43 @@ class SingleStatPanel:
             }
         }
 
+
+class QueryVariable:
+    def __init__(self, name, label, datasource, query, 
+                 include_all=False,
+                 multi=False,
+                 sort=VariableSort.Disabled,
+                 refresh=VariableRefresh.OnDashboardLoad):
+        self.name = name
+        self.label = label
+        self.datasource = datasource
+        self.query = query
+        self.include_all = include_all
+        self.multi = multi
+        self.sort = sort
+        self.refresh = refresh
+
+    def build(self):
+        return {
+            "allValue": None,
+            "datasource": self.datasource,
+            "definition": self.query,
+            "hide": 0,
+            "includeAll": self.include_all,
+            "label": self.label,
+            "multi": self.multi,
+            "name": self.name,
+            "query": self.query,
+            "refresh": self.refresh,
+            "regex": "",
+            "skipUrlSync": False,
+            "sort": self.sort,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": False
+        }
 
 class CustomVariable:
     def __init__(self, name, label, default_value, *other_values):

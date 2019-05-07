@@ -714,6 +714,38 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual["templating"]["list"])
 
+    def test_dashboard_with_query_variable(self):
+        expected = [
+            {
+                "allValue": None,
+                "datasource": "aDataSource",
+                "definition": "stats.app.value.*",
+                "hide": 0,
+                "includeAll": True,
+                "label": "A Var",
+                "multi": False,
+                "name": "a-var",
+                "query": "stats.app.value.*",
+                "refresh": 2,
+                "regex": "",
+                "skipUrlSync": False,
+                "sort": 4,
+                "tagValuesQuery": "",
+                "tags": [],
+                "tagsQuery": "",
+                "type": "query",
+                "useTags": False
+            }
+        ]
+
+        actual = bd.Dashboard(self.title) \
+            .with_variable(bd.QueryVariable('a-var', 'A Var', 'aDataSource', 'stats.app.value.*',
+                           include_all=True, sort=bd.VariableSort.NumericalDesc,
+                           refresh=bd.VariableRefresh.OnTimeRangeChange)) \
+            .build()
+
+        self.assertEqual(expected, actual["templating"]["list"])
+
     def test_dashboard_write_request_renders(self):
         dashboard = bd.Dashboard(self.title)
         actual = bd.DashboardWriteRequest(dashboard) \
