@@ -155,6 +155,36 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual.get("datasource"))
 
+    def test_panel_renders_with_lines_by_default(self):
+        actual = bd.Panel(self.title).build(self.panelId, self.span)
+
+        self.assertEqual(True, actual.get("lines"))
+
+    def test_panel_renders_without_lines(self):
+        actual = bd.Panel(self.title, lines=False).build(self.panelId, self.span)
+
+        self.assertEqual(False, actual.get("lines"))
+
+    def test_panel_renders_without_bars_by_default(self):
+        actual = bd.Panel(self.title).build(self.panelId, self.span)
+
+        self.assertEqual(False, actual.get("bars"))
+
+    def test_panel_renders_with_bars(self):
+        actual = bd.Panel(self.title, bars=True).build(self.panelId, self.span)
+
+        self.assertEqual(True, actual.get("bars"))
+
+    def test_panel_renders_without_points_by_default(self):
+        actual = bd.Panel(self.title).build(self.panelId, self.span)
+
+        self.assertEqual(False, actual.get("points"))
+
+    def test_panel_renders_with_points(self):
+        actual = bd.Panel(self.title, points=True).build(self.panelId, self.span)
+
+        self.assertEqual(True, actual.get("points"))
+
     def test_panel_renders_with_alias_colors(self):
         expected = {
             "metric1": "#color1",

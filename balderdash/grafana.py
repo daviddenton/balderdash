@@ -192,7 +192,7 @@ class Alert:
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
-                 span=None, maximum=None, datasource=None):
+                 span=None, maximum=None, datasource=None, lines=True, bars=False, points=False):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -205,6 +205,9 @@ class Panel:
         self.alias_colors = alias_colors
         self.span = span
         self.datasource = datasource
+        self.lines = lines
+        self.bars = bars
+        self.points = points
 
         self.available_ref_ids = list(map(chr, range(65, 91)))
 
@@ -252,12 +255,12 @@ class Panel:
                 "threshold1Color": "rgba(216, 200, 27, 0.27)",
                 "threshold2Color": "rgba(234, 112, 112, 0.22)"
             },
-            "lines": True,
+            "lines": self.lines,
             "fill": self.filled,
             "linewidth": 1,
-            "points": False,
+            "points": self.points,
             "pointradius": 5,
-            "bars": False,
+            "bars": self.bars,
             "stack": self.stacked,
             "percentage": False,
             "legend": {
