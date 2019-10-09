@@ -96,13 +96,17 @@ class VariableSort:
 
 
 class Notification:
-    def __init__(self, notification_id):
+    def __init__(self, notification_id=None, uid=None):
         self.notification_id = notification_id
+        self.uid = uid
 
     def build(self):
-        return {
-            'id': self.notification_id
-        }
+        result = {}
+        if self.notification_id is not None:
+            result['id'] = self.notification_id
+        if self.uid is not None:
+            result['uid'] = self.uid
+        return result
 
 
 class Condition:
