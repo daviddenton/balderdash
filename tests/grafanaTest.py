@@ -808,6 +808,24 @@ class GrafanaDashboardTest(unittest.TestCase):
         self.assertEqual(dashboard.build(), actual["dashboard"])
         self.assertEqual(True, actual["overwrite"])
 
+    def test_notification_for_creation(self):
+        expected = {
+            'uid': 'abc',
+            'name': 'a notification',
+            'type': 'email',
+            'isDefault': True,
+            'sendReminder': False,
+            'settings': {
+                'addresses': 'noone@example.com'
+            }
+        }
+
+        actual = bd.Notification(uid='abc', name='a notification', type='email', default=True, send_reminder=False, settings={
+            'addresses': 'noone@example.com'
+        })
+
+        self.assertEqual(expected, actual.build())
+
 
 if __name__ == "__main__":
     unittest.main()
