@@ -781,7 +781,7 @@ class GrafanaDashboardTest(unittest.TestCase):
                 "name": "a-var",
                 "query": "stats.app.value.*",
                 "refresh": 2,
-                "regex": "",
+                "regex": "(?!boo).*",
                 "skipUrlSync": False,
                 "sort": 4,
                 "tagValuesQuery": "",
@@ -795,7 +795,8 @@ class GrafanaDashboardTest(unittest.TestCase):
         actual = bd.Dashboard(self.title) \
             .with_variable(bd.QueryVariable('a-var', 'A Var', 'aDataSource', 'stats.app.value.*',
                            include_all=True, sort=bd.VariableSort.NumericalDesc,
-                           refresh=bd.VariableRefresh.OnTimeRangeChange)) \
+                           refresh=bd.VariableRefresh.OnTimeRangeChange,
+                           regex="(?!boo).*")) \
             .build()
 
         self.assertEqual(expected, actual["templating"]["list"])

@@ -376,7 +376,8 @@ class QueryVariable:
                  include_all=False,
                  multi=False,
                  sort=VariableSort.Disabled,
-                 refresh=VariableRefresh.OnDashboardLoad):
+                 refresh=VariableRefresh.OnDashboardLoad,
+                 regex=""):
         self.name = name
         self.label = label
         self.datasource = datasource
@@ -385,6 +386,7 @@ class QueryVariable:
         self.multi = multi
         self.sort = sort
         self.refresh = refresh
+        self.regex = regex
 
     def build(self):
         return {
@@ -398,7 +400,7 @@ class QueryVariable:
             "name": self.name,
             "query": self.query,
             "refresh": self.refresh,
-            "regex": "",
+            "regex": self.regex,
             "skipUrlSync": False,
             "sort": self.sort,
             "tagValuesQuery": "",
