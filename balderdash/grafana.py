@@ -550,6 +550,25 @@ class Dashboard:
             "hideAllLegends": False
         }
 
+
+class Datasource:
+    def __init__(self, name, type, url, access='proxy', default=False):
+            self.name = name
+            self.type = type
+            self.url = url
+            self.access = access
+            self.default = default
+
+    def build(self):
+        return {
+            'name': self.name,
+            'type': self.type,
+            'url': self.url,
+            'access': self.access,
+            'isDefault': self.default
+        }
+
+
 # This wraps the dashboard json to make it suitable for POSTing to /api/dashboards/db -- see http://docs.grafana.org/reference/http_api/
 class DashboardWriteRequest:
     def __init__(self, dashboard, overwrite=True):
