@@ -255,7 +255,7 @@ class GrafanaDashboardTest(unittest.TestCase):
                         "type": "and"
                     },
                     "query": {
-                        "datasourceId": 1,
+                        "datasourceId": 3,
                         "model": {
                             "refId": "A",
                             "target": metric1.target
@@ -303,7 +303,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             .with_metric(metric1) \
             .with_metric(metric2) \
             .with_alert(bd.Alert('a test alert', 55)
-                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 0))
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 0, datasource_id=3))
                         .with_condition(bd.Condition(metric2, bd.EvaluatorType.LessThan, 3, bd.OperatorType.Or))) \
             .build(self.panelId, self.span)
 
