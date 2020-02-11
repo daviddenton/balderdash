@@ -71,6 +71,13 @@ class GrafanaDashboardTest(unittest.TestCase):
         }
         self.assertEqual(expected, bd.PrometheusMetric('tar_get', 'metric', bd.PrometheusMetricFormat.Table, True, 3, 5, True).build('A'))
 
+    def test_prometheus_metric_can_be_added_to_a_row(self):
+        panel = bd.Panel('test_panel') \
+            .with_metric(bd.PrometheusMetric('tar_get'))
+
+        expected = [{'refId': 'A', 'expr': 'tar_get'}]
+        self.assertEqual(expected, panel.build(1)['targets'])
+
     def test_datasource_renders_with_defaults(self):
         expected = {
             'name': 'aName',

@@ -276,7 +276,7 @@ class Panel:
 
     def with_metric(self, metric):
         self.metrics.append(metric.build(self.available_ref_ids.pop(0)))
-        if metric.right_y_axis_metric_name is not None:
+        if hasattr(metric, 'right_y_axis_metric_name') and metric.right_y_axis_metric_name is not None:
             self.series_overrides.append({
                 "alias": metric.right_y_axis_metric_name,
                 "yaxis": 2
