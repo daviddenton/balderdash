@@ -51,6 +51,26 @@ class GrafanaDashboardTest(unittest.TestCase):
         }
         self.assertEqual(expected, bd.Metric(target).build('A'))
 
+    def test_simple_prometheus_metric_renders(self):
+        expected = {
+            'refId': 'A',
+            'expr': 'tar_get'
+        }
+        self.assertEqual(expected, bd.PrometheusMetric('tar_get').build('A'))
+
+    def test_complex_prometheus_metric_renders(self):
+        expected = {
+            'refId': 'A',
+            'expr': 'tar_get',
+            'legendFormat': 'metric',
+            'format': 'table',
+            'instant': True,
+            'interval': 3,
+            'intervalFactor': 5,
+            'hide': True
+        }
+        self.assertEqual(expected, bd.PrometheusMetric('tar_get', 'metric', bd.PrometheusMetricFormat.Table, True, 3, 5, True).build('A'))
+
     def test_datasource_renders_with_defaults(self):
         expected = {
             'name': 'aName',

@@ -95,6 +95,12 @@ class VariableSort:
     AlphaCaseInsensitiveDesc = 6
 
 
+class PrometheusMetricFormat:
+    Heatmap = 'heatmap'
+    Table = 'table'
+    TimeSeries = 'time_series'
+
+
 class Notification:
     def __init__(self,
                  notification_id=None,
@@ -178,6 +184,36 @@ class Metric:
             "refId": ref_id,
             "target": self.target
         }
+        if self.hide:
+            json['hide'] = True
+        return json
+
+
+class PrometheusMetric:
+    def __init__(self, expr, legend_format=None, format=None, instant=None, interval=None, interval_factor=None, hide=False):
+        self.expr = expr
+        self.legend_format = legend_format
+        self.format = format
+        self.instant = instant
+        self.interval = interval
+        self.interval_factor = interval_factor
+        self.hide = hide
+
+    def build(self, ref_id):
+        json = {
+            "refId": ref_id,
+            "expr": self.expr
+        }
+        if self.legend_format:
+            json['legendFormat'] = self.legend_format
+        if self.format:
+            json['format'] = self.format
+        if self.instant:
+            json['instant'] = True
+        if self.interval:
+            json['interval'] = self.interval
+        if self.interval_factor:
+            json['intervalFactor'] = self.interval_factor
         if self.hide:
             json['hide'] = True
         return json
