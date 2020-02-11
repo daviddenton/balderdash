@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='balderdash',
-    version='1.27.0',
+    version='1.28.0',
     description='Builders for monitoring dashboards',
     url='http://github.com/daviddenton/balderdash/',
     license='Apache 2.0',
