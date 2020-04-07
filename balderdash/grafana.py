@@ -147,9 +147,16 @@ class Condition:
         self.datasource_id = datasource_id
 
     def build(self, panel_metrics):
-        filtered = filter(lambda possible_metric: possible_metric['target'] == self.metric.target, panel_metrics)
-        matching_metric = list(filtered).pop(0)
-        return {
+        def filter_fn(possible_metric):
+            if "expr" in possible_metric:
+                return possible_metric['expr'] == self.metric.expr
+            elif "target" in possible_metric:
+                return possible_metric['target'] == self.metric.target
+            else:
+                raise ValueError("Cannot match expression key in %s" % possible_metric)
+
+        matching_metric = list(filter(filter_fn, panel_metrics)).pop(0)
+        model = {
             "evaluator": {
                 "params": [self.value],
                 "type": self.evaluator_type
@@ -159,10 +166,6 @@ class Condition:
             },
             "query": {
                 "datasourceId": self.datasource_id,
-                "model": {
-                    "refId": matching_metric['refId'],
-                    "target": matching_metric['target']
-                },
                 "params": [matching_metric['refId'], "5m", "now"]
             },
             "reducer": {
@@ -171,6 +174,14 @@ class Condition:
             },
             "type": "query"
         }
+
+        if 'target' in matching_metric:
+            model['query']['model'] = {
+                "refId": matching_metric['refId'],
+                "target": matching_metric['target']
+            }
+
+        return model
 
 
 class Metric:

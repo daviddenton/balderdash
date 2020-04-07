@@ -287,7 +287,7 @@ class GrafanaDashboardTest(unittest.TestCase):
 
         self.assertEqual(expected, actual.get("targets"))
 
-    def test_panel_renders_an_alert(self):
+    def test_panel_renders_a_graphite_alert(self):
         metric1 = random_metric()
         metric2 = random_metric()
 
@@ -329,6 +329,67 @@ class GrafanaDashboardTest(unittest.TestCase):
                             "refId": "B",
                             "target": metric2.target
                         },
+                        "params": ["B", "5m", "now"]
+                    },
+                    "reducer": {
+                        "params": [],
+                        "type": "last"
+                    },
+                    "type": "query"
+                }
+            ],
+            "executionErrorState": "alerting",
+            "frequency": "55s",
+            "handler": 1,
+            "name": "a test alert",
+            "noDataState": "no_data",
+            "notifications": []
+        }
+
+        actual = bd.Panel(self.title) \
+            .with_metric(metric1) \
+            .with_metric(metric2) \
+            .with_alert(bd.Alert('a test alert', 55)
+                        .with_condition(bd.Condition(metric1, bd.EvaluatorType.GreaterThan, 0, datasource_id=3))
+                        .with_condition(bd.Condition(metric2, bd.EvaluatorType.LessThan, 3, bd.OperatorType.Or))) \
+            .build(self.panelId, self.span)
+
+        self.assertEqual(expected, actual.get("alert"))
+
+    def test_panel_renders_a_prometheus_alert(self):
+        metric1 = bd.PrometheusMetric('an_expr')
+        metric2 = bd.PrometheusMetric('another_expr')
+
+        expected = {
+            "conditions": [
+                {
+                    "evaluator": {
+                        "params": [0],
+                        "type": "gt"
+                    },
+                    "operator": {
+                        "type": "and"
+                    },
+                    "query": {
+                        "datasourceId": 3,
+                        "params": ["A", "5m", "now"]
+                    },
+                    "reducer": {
+                        "params": [],
+                        "type": "last"
+                    },
+                    "type": "query"
+                },
+                {
+                    "evaluator": {
+                        "params": [3],
+                        "type": "lt"
+                    },
+                    "operator": {
+                        "type": "or"
+                    },
+                    "query": {
+                        "datasourceId": 1,
                         "params": ["B", "5m", "now"]
                     },
                     "reducer": {
