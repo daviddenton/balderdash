@@ -879,7 +879,7 @@ class GrafanaDashboardTest(unittest.TestCase):
     def test_dashboard_with_query_variable(self):
         expected = [
             {
-                "allValue": None,
+                "allValue": ".*",
                 "datasource": "aDataSource",
                 "definition": "stats.app.value.*",
                 "hide": 0,
@@ -887,6 +887,7 @@ class GrafanaDashboardTest(unittest.TestCase):
                 "label": "A Var",
                 "multi": False,
                 "name": "a-var",
+                "options": [],
                 "query": "stats.app.value.*",
                 "refresh": 2,
                 "regex": "(?!boo).*",
@@ -904,7 +905,8 @@ class GrafanaDashboardTest(unittest.TestCase):
             .with_variable(bd.QueryVariable('a-var', 'A Var', 'aDataSource', 'stats.app.value.*',
                            include_all=True, sort=bd.VariableSort.NumericalDesc,
                            refresh=bd.VariableRefresh.OnTimeRangeChange,
-                           regex="(?!boo).*")) \
+                           regex="(?!boo).*",
+                           all_value=".*")) \
             .build()
 
         self.assertEqual(expected, actual["templating"]["list"])

@@ -425,7 +425,8 @@ class QueryVariable:
                  multi=False,
                  sort=VariableSort.Disabled,
                  refresh=VariableRefresh.OnDashboardLoad,
-                 regex=""):
+                 regex="",
+                 all_value=None):
         self.name = name
         self.label = label
         self.datasource = datasource
@@ -435,10 +436,11 @@ class QueryVariable:
         self.sort = sort
         self.refresh = refresh
         self.regex = regex
+        self.all_value = all_value
 
     def build(self):
         return {
-            "allValue": None,
+            "allValue": self.all_value,
             "datasource": self.datasource,
             "definition": self.query,
             "hide": 0,
@@ -446,6 +448,7 @@ class QueryVariable:
             "label": self.label,
             "multi": self.multi,
             "name": self.name,
+            "options": [],
             "query": self.query,
             "refresh": self.refresh,
             "regex": self.regex,
