@@ -78,6 +78,31 @@ class GrafanaDashboardTest(unittest.TestCase):
         expected = [{'refId': 'A', 'expr': 'tar_get'}]
         self.assertEqual(expected, panel.build(1)['targets'])
 
+    def test_simple_sql_metric_renders(self):
+        expected = {
+            'refId': 'A',
+            'rawQuery': True,
+            'rawSql': 'SELECT a,time FROM b',
+            'metricColumn': 'none',
+            'timeColumn': 'time_col',
+            'timeColumnType': 'timestamp',
+            'format': 'table'
+        }
+        self.assertEqual(expected, bd.SqlMetric('SELECT a,time FROM b', 'time_col', format=bd.PrometheusMetricFormat.Table).build('A'))
+
+    def test_complex_sql_metric_renders(self):
+        expected = {
+            'refId': 'A',
+            'rawQuery': True,
+            'rawSql': 'SELECT a,time FROM b',
+            'metricColumn': 'cake',
+            'timeColumn': 'time_col',
+            'timeColumnType': 'time',
+            'format': 'table',
+            'hide': True
+        }
+        self.assertEqual(expected, bd.SqlMetric('SELECT a,time FROM b', 'time_col', time_column_type='time', format=bd.PrometheusMetricFormat.Table, metric_column='cake', hide=True).build('A'))
+
     def test_datasource_renders_with_defaults(self):
         expected = {
             'name': 'aName',
@@ -190,6 +215,75 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, self.span))
+
+    def test_panel_renders_with_options(self):
+        expected = {
+            "showHeader": True,
+            "sortBy": [
+                {
+                    "desc": False,
+                    "displayName": "A column"
+                }
+            ]
+        }
+
+        options = bd.PanelOptions(True, [bd.PanelOptionsSortBy(False, 'A column')])
+        self.assertEqual(expected, bd.Panel(self.title, bd.YAxisFormat.Bytes, bd.FillStyle.Filled, bd.StackStyle.Stacked, 5, options=options)
+                         .with_metric(random_metric())
+                         .build(self.panelId, self.span)['options'])
+
+    def test_panel_renders_with_overrides(self):
+        expected = [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": None
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 95
+                    },
+                    {
+                      "color": "super-light-green",
+                      "value": 99
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+
+        overrides = [
+            bd.PanelOverride(
+                bd.PanelOverrideMatcher('byType', 'number'),
+                [
+                    bd.PanelOverrideProperty('custom.displayMode', 'color-background'),
+                    bd.PanelOverrideProperty('thresholds', bd.PanelOverridePropertyThresholds(steps=[
+                        bd.PanelOverridePropertyThresholdStep('red', None),
+                        bd.PanelOverridePropertyThresholdStep('#EAB839', 95),
+                        bd.PanelOverridePropertyThresholdStep('super-light-green', 99)
+                    ]))
+                ]
+            )
+        ]
+        self.assertEqual(expected, bd.Panel(self.title, bd.YAxisFormat.Bytes, bd.FillStyle.Filled, bd.StackStyle.Stacked, 5, overrides=overrides)
+                         .with_metric(random_metric())
+                         .build(self.panelId, self.span)['overrides'])
 
     def test_panel_renders_with_specific_maximum(self):
         yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])

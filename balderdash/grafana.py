@@ -101,6 +101,11 @@ class PrometheusMetricFormat:
     TimeSeries = 'time_series'
 
 
+class GrafanaPanelType:
+    Graph = 'graph'
+    Table = 'table'
+
+
 class Notification:
     def __init__(self,
                  notification_id=None,
@@ -200,6 +205,31 @@ class Metric:
         return json
 
 
+class SqlMetric:
+    def __init__(self, raw_sql, time_column, time_column_type='timestamp', format=None, hide=False, metric_column='none'):
+        self.format = format
+        self.hide = hide
+        self.raw_sql = raw_sql
+        self.time_column = time_column
+        self.time_column_type = time_column_type
+        self.metric_column = metric_column
+
+    def build(self, ref_id):
+        json = {
+            "refId": ref_id,
+            'rawQuery': True,
+            'rawSql': self.raw_sql,
+            'metricColumn': self.metric_column,
+            'timeColumn': self.time_column,
+            'timeColumnType': self.time_column_type
+        }
+        if self.format:
+            json['format'] = self.format
+        if self.hide:
+            json['hide'] = True
+        return json
+
+
 class PrometheusMetric:
     def __init__(self, expr, legend_format=None, format=None, instant=None, interval=None, interval_factor=None, hide=False):
         self.expr = expr
@@ -263,10 +293,103 @@ class Alert:
         return alert
 
 
+class PanelOverrideMatcher:
+    def __init__(self, id, options):
+        self.id = id
+        self.options = options
+
+    def build(self):
+        return {
+            'id': self.id,
+            'options': self.options
+        }
+
+
+class PanelOverrideProperty:
+    def __init__(self, id, value):
+        self.id = id
+        self.value = value
+    
+    def build(self):
+        try:
+            value = self.value.build()
+        except AttributeError:
+            value = self.value
+
+        return {
+            'id': self.id,
+            'value': value 
+        }
+
+
+class PanelOverridePropertyThresholds:
+    def __init__(self, steps, mode='absolute'):
+        self.mode = mode
+        self.steps = steps
+
+    def build(self):
+        return {
+            'mode': self.mode,
+            'steps': list(map(lambda step: step.build(), self.steps))
+        }
+
+
+class PanelOverridePropertyThresholdStep:
+    def __init__(self, colour, value):
+        self.colour = colour
+        self.value = value
+
+    def build(self):
+        return {
+            'color': self.colour,
+            'value': self.value
+        }
+
+class PanelOverride:
+    def __init__(self, matcher, properties):
+        self.matcher = matcher
+        self.properties = properties
+
+    def build(self):
+        return {
+            'matcher': self.matcher.build(),
+            'properties': list(map(lambda property: property.build(), self.properties))
+        }
+
+
+class PanelOptionsSortBy:
+    def __init__(self, desc=True, display_name=None):
+        self.desc = desc
+        self.display_name = display_name
+
+    def build(self):
+        return {
+            'desc': self.desc,
+            'displayName': self.display_name
+        }
+
+
+class PanelOptions:
+    def __init__(self, show_header=True, sort_by=None):
+        self.show_header = show_header
+        self.sort_by = sort_by
+
+    def build(self):
+        json = {
+            'showHeader': self.show_header
+        }
+
+        if self.sort_by:
+            json['sortBy'] = list(map(lambda sort: sort.build(), self.sort_by))
+
+        return json
+
+
 class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
-                 span=None, maximum=None, datasource=None, lines=True, bars=False, points=False):
+                 span=None, maximum=None, datasource=None, lines=True, bars=False, points=False,
+                 panel_type=GrafanaPanelType.Graph, overrides=None, options=None):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
@@ -282,6 +405,9 @@ class Panel:
         self.lines = lines
         self.bars = bars
         self.points = points
+        self.panel_type = panel_type
+        self.overrides = overrides
+        self.options = options
 
         self.available_ref_ids = list(map(chr, range(65, 91)))
 
@@ -309,7 +435,7 @@ class Panel:
             "error": False,
             "span": self.span or span,
             "editable": True,
-            "type": "graph",
+            "type": self.panel_type,
             "id": panel_id,
             "datasource": self.datasource,
             "renderer": "flot",
@@ -357,6 +483,10 @@ class Panel:
             "seriesOverrides": self.series_overrides,
             "links": []
         }
+        if self.overrides:
+            panel['overrides'] = list(map(lambda override: override.build(), self.overrides))
+        if self.options:
+            panel['options'] = self.options.build()
         if self.alert:
             panel['alert'] = self.alert.build(self.metrics)
         return panel
