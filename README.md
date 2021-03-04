@@ -16,7 +16,7 @@ pip install balderdash
 
 ## Publish it:
  - Ensure [twine](https://pypi.org/project/twine/) is installed
- - Ensure you've got [~/.pypirc](https://docs.python.org/3/distutils/packageindex.html#the-pypirc-file) setup with your username
+ - Ensure you've got [~/.pypirc](https://packaging.python.org/specifications/pypirc/) setup with your username
  - If your ~/.pypirc defines your repository as www.python.org/pypi, delete that line. It's wrong.
  - Update version in ./setup.py
  - Run `./publish.sh <version>`
