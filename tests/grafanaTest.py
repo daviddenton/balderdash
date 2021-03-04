@@ -84,7 +84,9 @@ class GrafanaDashboardTest(unittest.TestCase):
             'type': 'prometheus',
             'url': 'https://a.server/path',
             'access': 'proxy',
-            'isDefault': False
+            'isDefault': False,
+            'database': None,
+            'user': None
         }
         self.assertEqual(expected, bd.Datasource('aName', 'prometheus', 'https://a.server/path').build())
 
@@ -94,9 +96,26 @@ class GrafanaDashboardTest(unittest.TestCase):
             'type': 'graphite',
             'url': 'https://another.server/',
             'access': 'abc',
-            'isDefault': True
+            'isDefault': True,
+            'database': None,
+            'user': None
         }
         self.assertEqual(expected, bd.Datasource('anotherName', 'graphite', 'https://another.server/', access='abc', default=True).build())
+
+    def test_datasource_renders_with_password(self):
+        expected = {
+            'name': 'anotherName',
+            'type': 'mysql',
+            'url': 'a.server',
+            'access': 'proxy',
+            'isDefault': True,
+            'database': 'aDb',
+            'user': 'aUser',
+            'secureJsonData': {
+                'password': 'boo'
+            }
+        }
+        self.assertEqual(expected, bd.Datasource('anotherName', 'mysql', 'a.server', default=True, database='aDb', user='aUser', password='boo').build())
 
     def test_panel_renders(self):
         yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])

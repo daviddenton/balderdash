@@ -602,21 +602,33 @@ class Dashboard:
 
 
 class Datasource:
-    def __init__(self, name, type, url, access='proxy', default=False):
-            self.name = name
-            self.type = type
-            self.url = url
-            self.access = access
-            self.default = default
+    def __init__(self, name, type, url, access='proxy', default=False, database=None, user=None, password=None):
+        self.name = name
+        self.type = type
+        self.url = url
+        self.access = access
+        self.default = default
+        self.database = database
+        self.user = user
+        self.password = password
 
     def build(self):
-        return {
+        datasource = {
             'name': self.name,
             'type': self.type,
             'url': self.url,
             'access': self.access,
-            'isDefault': self.default
+            'isDefault': self.default,
+            'database': self.database,
+            'user': self.user
         }
+
+        if self.password:
+            datasource['secureJsonData'] = {
+                'password': self.password
+            }
+
+        return datasource
 
 
 # This wraps the dashboard json to make it suitable for POSTing to /api/dashboards/db -- see http://docs.grafana.org/reference/http_api/
