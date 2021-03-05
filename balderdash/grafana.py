@@ -484,7 +484,9 @@ class Panel:
             "links": []
         }
         if self.overrides:
-            panel['overrides'] = list(map(lambda override: override.build(), self.overrides))
+            panel['fieldConfig'] = {
+                'overrides': list(map(lambda override: override.build(), self.overrides))
+            }
         if self.options:
             panel['options'] = self.options.build()
         if self.alert:

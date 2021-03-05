@@ -233,40 +233,42 @@ class GrafanaDashboardTest(unittest.TestCase):
                          .build(self.panelId, self.span)['options'])
 
     def test_panel_renders_with_overrides(self):
-        expected = [
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "number"
-            },
-            "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
+        expected = {
+            "overrides": [
+                {
+                    "matcher": {
+                    "id": "byType",
+                    "options": "number"
+                    },
+                    "properties": [
                     {
-                      "color": "red",
-                      "value": None
+                        "id": "custom.displayMode",
+                        "value": "color-background"
                     },
                     {
-                      "color": "#EAB839",
-                      "value": 95
-                    },
-                    {
-                      "color": "super-light-green",
-                      "value": 99
+                        "id": "thresholds",
+                        "value": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                            "color": "red",
+                            "value": None
+                            },
+                            {
+                            "color": "#EAB839",
+                            "value": 95
+                            },
+                            {
+                            "color": "super-light-green",
+                            "value": 99
+                            }
+                        ]
+                        }
                     }
-                  ]
+                    ]
                 }
-              }
             ]
-          }
-        ]
+        }
 
         overrides = [
             bd.PanelOverride(
@@ -283,7 +285,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         ]
         self.assertEqual(expected, bd.Panel(self.title, bd.YAxisFormat.Bytes, bd.FillStyle.Filled, bd.StackStyle.Stacked, 5, overrides=overrides)
                          .with_metric(random_metric())
-                         .build(self.panelId, self.span)['overrides'])
+                         .build(self.panelId, self.span)['fieldConfig'])
 
     def test_panel_renders_with_specific_maximum(self):
         yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])
