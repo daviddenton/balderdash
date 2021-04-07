@@ -146,6 +146,7 @@ class GrafanaDashboardTest(unittest.TestCase):
         yaxis = random.choice([bd.YAxisFormat.Bits, bd.YAxisFormat.BitsPerSecond, bd.YAxisFormat.Bytes])
         filled = random.choice([[bd.FillStyle.Filled, bd.FillStyle.Unfilled]])
         stacked = random.choice([[bd.StackStyle.Stacked, bd.StackStyle.Stacked]])
+        as_percentage = random.choice([[bd.PercentageStyle.Disabled, bd.PercentageStyle.AsPercentage]])
         minimum = 5
 
         metric1 = random_metric()
@@ -183,7 +184,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             "pointradius": 5,
             "bars": False,
             "stack": stacked,
-            "percentage": False,
+            "percentage": stacked and as_percentage,
             "legend": {
                 "show": True,
                 "values": False,
@@ -210,8 +211,7 @@ class GrafanaDashboardTest(unittest.TestCase):
             }],
             "links": []
         }
-
-        self.assertEqual(expected, bd.Panel(self.title, yaxis, filled, stacked, minimum)
+        self.assertEqual(expected, bd.Panel(self.title, yaxis, filled, stacked, minimum, as_percentage=as_percentage)
                          .with_metric(metric1)
                          .with_metric(metric2)
                          .build(self.panelId, self.span))

@@ -29,6 +29,9 @@ class StackStyle:
     Stacked = True
     Unstacked = False
 
+class PercentageStyle:
+    AsPercentage = True
+    Disabled = False
 
 class FillStyle:
     Filled = 10
@@ -389,13 +392,14 @@ class Panel:
     def __init__(self, title, y_axis_format=YAxisFormat.NoFormat, filled=FillStyle.Unfilled,
                  stacked=StackStyle.Unstacked, minimum=YAxisMinimum.Auto, alias_colors=None,
                  span=None, maximum=None, datasource=None, lines=True, bars=False, points=False,
-                 panel_type=GrafanaPanelType.Graph, overrides=None, options=None):
+                 panel_type=GrafanaPanelType.Graph, overrides=None, options=None, as_percentage=PercentageStyle.Disabled):
         self.y_axis_format = y_axis_format
         self.title = title
         self.metrics = []
         self.alert = None
         self.filled = filled
         self.stacked = stacked
+        self.as_percentage = as_percentage
         self.minimum = minimum
         self.maximum = maximum
         self.series_overrides = []
@@ -462,7 +466,7 @@ class Panel:
             "pointradius": 5,
             "bars": self.bars,
             "stack": self.stacked,
-            "percentage": False,
+            "percentage": self.stacked and self.as_percentage,
             "legend": {
                 "show": True,
                 "values": False,
