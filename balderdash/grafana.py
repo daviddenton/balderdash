@@ -489,6 +489,22 @@ class Panel:
         }
         if self.overrides:
             panel['fieldConfig'] = {
+                'defaults': {
+                    'mappings': [],
+                    'thresholds': {
+                        'mode': 'absolute',
+                        'steps': [
+                            {
+                                "color": "green",
+                                "value": None
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
                 'overrides': list(map(lambda override: override.build(), self.overrides))
             }
         if self.options:

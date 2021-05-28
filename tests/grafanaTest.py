@@ -234,6 +234,22 @@ class GrafanaDashboardTest(unittest.TestCase):
 
     def test_panel_renders_with_overrides(self):
         expected = {
+            "defaults": {
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                        {
+                            "color": "green",
+                            "value": None
+                        },
+                        {
+                            "color": "red",
+                            "value": 80
+                        }
+                    ]
+                }
+            },
             "overrides": [
                 {
                     "matcher": {
