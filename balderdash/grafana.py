@@ -107,6 +107,7 @@ class PrometheusMetricFormat:
 class GrafanaPanelType:
     Graph = 'graph'
     Table = 'table'
+    Stat = 'stat'
 
 
 class Notification:
